@@ -82,7 +82,19 @@ export async function dbGetEvent(id: number): Promise<Event | null> {
 }
 
 export async function dbAddEvent(event: AddEventFormObject): Promise<Event> {
+    return {
+        id: 1,
+        hall: {
+            id: event.hallId,
+            name: "temp value",
+            numberOfSeats: 100,
+        },
+        play: {
+            id: event.playId,
+            name: "temp value",
+        },
+        time: event.time,
+    } as Event;
 }
 
-export async function dbDeleteEvent(id: number): Promise<void> {
-}
+export async function dbDeleteEvent(id: number): Promise<void> {}
