@@ -3,71 +3,99 @@
 import {
     dbAddEvent,
     dbDeleteEvent,
-    dbGetEvent,
-    dbGetEvents,
+    dbUpdateEvent,
 } from "@/db-handler/db-events";
 import {
     AddEventFormState,
     DeleteEventFormState,
-    Event,
+    UpdateEventFormState,
     ZAddEventFormObject,
     ZDeleteEventFormObject,
+    ZUpdateEventFormObject,
 } from "@/types/event";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function getEvents(): Promise<Event[]> {
-    return await dbGetEvents();
-}
-
-export async function addEvent(
+export async function addEventAction(
     prevState: AddEventFormState,
     formData: FormData,
 ): Promise<AddEventFormState> {
-    const event = ZAddEventFormObject.safeParse({
+    const data = ZAddEventFormObject.safeParse({
         playId: parseInt(formData.get("playId") as string),
         hallId: parseInt(formData.get("hallId") as string),
         time: new Date(formData.get("time") as string),
     });
 
-    if (!event.success) {
-        console.log(event.error.errors);
+    if (!data.success) {
         return {
             ...prevState,
-            message: event.error.errors.map((e) => e.message).join(", "),
+            message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
 
-    const parsedEvent = event.data;
+    const parsedEvent = data.data;
     await dbAddEvent(parsedEvent);
 
-    revalidatePath("/");
-    redirect("/admin");
+    revalidatePath("/admin/events");
+
+    return {
+        event: undefined,
+        message: "Event byl vytvořen",
+    };
 }
 
-export async function getEvent(id: number): Promise<Event | null> {
-    return dbGetEvent(id);
+export async function updateEvent(
+    prevState: UpdateEventFormState,
+    formData: FormData,
+): Promise<UpdateEventFormState> {
+    const data = ZUpdateEventFormObject.safeParse({
+        id: parseInt(formData.get("id") as string),
+        playId: parseInt(formData.get("playId") as string),
+        hallId: parseInt(formData.get("hallId") as string),
+        time: new Date(formData.get("time") as string),
+    });
+
+    if (!data.success) {
+        return {
+            message: data.error.errors.map((e) => e.message).join(", "),
+        };
+    }
+
+    const parsedEvent = data.data;
+    const updatedEvent = await dbUpdateEvent(parsedEvent);
+
+    revalidatePath("/admin/events");
+
+    return {
+        event: {
+            id: updatedEvent.id,
+            playId: updatedEvent.play.id,
+            hallId: updatedEvent.hall.id,
+            time: updatedEvent.time,
+        },
+        message: "Event byl upraven",
+    };
 }
 
 export async function deleteEvent(
+    prevState: DeleteEventFormState,
     formData: FormData,
 ): Promise<DeleteEventFormState> {
-    const obj = ZDeleteEventFormObject.safeParse({
+    const data = ZDeleteEventFormObject.safeParse({
         id: parseInt(formData.get("id") as string),
     });
 
-    if (!obj.success) {
-        console.log(obj.error.errors);
+    if (!data.success) {
         return {
-            message: obj.error.errors.map((e) => e.message).join(", "),
+            message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
 
-    const { id } = obj.data;
+    const { id } = data.data;
     await dbDeleteEvent(id);
 
-    revalidatePath("/");
+    revalidatePath("/admin/events");
+
     return {
-        message: "Event deleted",
+        message: "Event byl smazán",
     };
 }

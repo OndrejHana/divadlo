@@ -1,6 +1,6 @@
-import { Play } from "@/types/play";
+import { AddPlayFormObject, Play, UpdatePlayFormObject } from "@/types/play";
 
-export async function getPlays(): Promise<Play[]> {
+export async function dbGetPlays(): Promise<Play[]> {
     return [
         {
             id: 1,
@@ -27,4 +27,41 @@ export async function getPlays(): Promise<Play[]> {
                 "A tribe of cats called the Jellicles must decide yearly which one will ascend to the Heaviside Layer and come back to a new Jellicle life.",
         },
     ];
+}
+
+export async function dbGetPlay(id: number): Promise<Play | undefined> {
+    return {
+        id: 1,
+        name: "The Phantom of the Opera",
+        description:
+            "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
+        author: "Andrew Lloyd Webber",
+        yearOfRelease: 1986,
+    };
+}
+
+export async function dbAddPlay(addPlayData: AddPlayFormObject): Promise<Play> {
+    return {
+        id: 1,
+        name: addPlayData.name,
+        description: addPlayData.description,
+        yearOfRelease: addPlayData.yearOfRelease,
+        author: addPlayData.author,
+    };
+}
+
+export async function dbUpdatePlay(
+    updatePlayData: UpdatePlayFormObject,
+): Promise<Play> {
+    return {
+        id: updatePlayData.id,
+        name: updatePlayData.name,
+        description: updatePlayData.description,
+        yearOfRelease: updatePlayData.yearOfRelease,
+        author: updatePlayData.author,
+    };
+}
+
+export async function dbDeletePlay(id: number): Promise<void> {
+    return;
 }

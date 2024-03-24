@@ -1,8 +1,10 @@
-import { AddEventFormObject, Event } from "@/types/event";
+import {
+    AddEventFormObject,
+    Event,
+    UpdateEventFormObject,
+} from "@/types/event";
 
 export async function dbGetEvents(): Promise<Event[]> {
-    // TODO: Fetch events from the database
-
     const mockEvents: Event[] = [
         {
             id: 1,
@@ -78,23 +80,67 @@ export async function dbGetEvents(): Promise<Event[]> {
 }
 
 export async function dbGetEvent(id: number): Promise<Event | null> {
-    return null;
-}
-
-export async function dbAddEvent(event: AddEventFormObject): Promise<Event> {
     return {
         id: 1,
+        time: new Date("2021-10-01T12:00:00"),
         hall: {
-            id: event.hallId,
-            name: "temp value",
+            id: 2,
+            name: "Main Hall",
             numberOfSeats: 100,
         },
         play: {
-            id: event.playId,
-            name: "temp value",
+            id: 1,
+            author: "Andrew Lloyd Webber",
+            description:
+                "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
+            yearOfRelease: 1986,
+            name: "The Phantom of the Opera",
         },
-        time: event.time,
     } as Event;
+}
+
+export async function dbAddEvent(
+    addEventData: AddEventFormObject,
+): Promise<Event> {
+    return {
+        id: 1,
+        time: addEventData.time,
+        hall: {
+            id: addEventData.hallId,
+            name: "Main Hall",
+            numberOfSeats: 100,
+        },
+        play: {
+            id: addEventData.playId,
+            name: "The Phantom of the Opera",
+            author: "Andrew Lloyd Webber",
+            description:
+                "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
+            yearOfRelease: 1986,
+        },
+    };
+}
+
+export async function dbUpdateEvent(
+    updateEventData: UpdateEventFormObject,
+): Promise<Event> {
+    return {
+        id: updateEventData.id,
+        time: updateEventData.time,
+        hall: {
+            id: updateEventData.hallId,
+            name: "Main Hall",
+            numberOfSeats: 100,
+        },
+        play: {
+            id: updateEventData.playId,
+            name: "The Phantom of the Opera",
+            author: "Andrew Lloyd Webber",
+            yearOfRelease: 1986,
+            description:
+                "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
+        },
+    };
 }
 
 export async function dbDeleteEvent(id: number): Promise<void> {}

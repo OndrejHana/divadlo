@@ -1,9 +1,7 @@
-import UpcomingEvents from "./upcoming-events";
-
-export default function Page() {
+export default async function Page() {
     return (
-        <main className="w-full">
-            <UpcomingEvents />
+        <main className="h-full w-full grow">
+            Simon je genius v programování i na Admin strance
         </main>
     );
 }
