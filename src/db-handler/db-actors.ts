@@ -4,99 +4,177 @@ import {
     UpdateActorFormObject,
 } from "@/types/actor";
 
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 export async function dbGetActors(): Promise<Actor[]> {
-    return [
-        {
-            id: 1,
-            firstName: "John",
-            lastName: "Doe",
-            description: "Actor",
-            email: "johndoe@actor.com",
-            phone: "123456789",
+    const { data, error } = await supabase
+        .from('actor')
+        .select(`
+            id, 
+            description,
+            person(first_name, last_name, email, phone,
+                address(city, street, house_number, zip_code)
+            )
+        `);
+
+    console.log(data);
+    console.log(error);
+    if(error !== null) { throw new Error(error);}
+    if(data === null || data === undefined) { throw new Error("Error getting actors");}
+
+    const actors: Actor[] = data?.map((actor: any) => {
+        const Actor: Actor = {
+            id: actor.id,
+            firstName: actor.person.first_name,
+            lastName: actor.person.last_name,
+            description: actor.description,
+            email: actor.person.email,
+            phone: actor.person.phone,
             address: {
-                id: 1,
-                city: "Los Angeles",
-                street: "Hollywood",
-                houseNumber: 1,
-                zipCode: "12345",
-            },
-        },
-        {
-            id: 2,
-            firstName: "Jane",
-            lastName: "Doe",
-            description: "Actress",
-            email: "janedoe@actor.com",
-            phone: "987654321",
-            address: {
-                id: 2,
-                city: "Los Angeles",
-                street: "Hollywood",
-                houseNumber: 2,
-                zipCode: "12345",
-            },
-        },
-    ];
+                id: actor.person.address.id,
+                city: actor.person.address.city,
+                street: actor.person.address.street,
+                houseNumber: actor.person.address.house_number,
+                zipCode: actor.person.address.zip_code,
+            }
+        }
+        return Actor
+    }) 
+    return actors
 }
 
+
 export async function dbGetActor(id: number): Promise<Actor | undefined> {
+    const { data, error } = await supabase
+        .from('actor')
+        .select(`
+            id, 
+            description,
+            person(first_name, last_name, email, phone,
+                address(city, street, house_number, zip_code)
+            )
+        `)
+        .eq('id', id)
+        .limit(1);
+            
+    if(data === null || data.length != 1) { return undefined;}
+    if(error !== null) { throw new Error("Error getting actor");}
+
+    const actor = data[0];
     return {
-        id: 1,
-        firstName: "John",
-        lastName: "Doe",
-        description: "Actor",
-        email: "johndoe@gmail.com",
-        phone: "123456789",
+        id: actor.id,
+        firstName: actor.person.first_name,
+        lastName: actor.person.last_name,
+        description: actor.description,
+        email: actor.person.email,
+        phone: actor.person.phone,
         address: {
-            id: 1,
-            city: "Los Angeles",
-            street: "Hollywood",
-            houseNumber: 1,
-            zipCode: "12345",
-        },
+            id: actor.person.address.id,
+            city: actor.person.address.city,
+            street: actor.person.address.street,
+            houseNumber: actor.person.address.house_number,
+            zipCode: actor.person.address.zip_code,
+        }
     };
 }
 
 export async function dbAddActor(
     addActorData: AddActorFormObject,
 ): Promise<Actor> {
+    const { data, error } = await supabase
+        .from('actor')
+        .insert([
+            {
+                description: addActorData.description,
+                person: {
+                    first_name: addActorData.firstName,
+                    last_name: addActorData.lastName,
+                    email: addActorData.email,
+                    phone: addActorData.phone,
+                    address: {
+                        city: addActorData.city,
+                        street: addActorData.street,
+                        house_number: addActorData.houseNumber,
+                        zip_code: addActorData.zipCode,
+                    }
+                }
+            }
+        ])
+        .select();
+
+    if(error !== null || data === null) { throw new Error("Actor not added");}
+
+    const actor = data[0];
     return {
-        id: 1,
-        firstName: addActorData.firstName,
-        lastName: addActorData.lastName,
-        description: addActorData.description,
-        email: addActorData.email,
-        phone: addActorData.phone,
+        id: actor.id,
+        firstName: actor.person.first_name,
+        lastName: actor.person.last_name,
+        description: actor.description,
+        email: actor.person.email,
+        phone: actor.person.phone,
         address: {
-            id: 1,
-            city: addActorData.city,
-            street: addActorData.street,
-            houseNumber: addActorData.houseNumber,
-            zipCode: addActorData.zipCode,
-        },
+            id: actor.person.address.id,
+            city: actor.person.address.city,
+            street: actor.person.address.street,
+            houseNumber: actor.person.address.house_number,
+            zipCode: actor.person.address.zip_code,
+        }
     };
 }
 
 export async function dbUpdateActor(
     updateFormData: UpdateActorFormObject,
 ): Promise<Actor> {
+    const { data, error } = await supabase
+        .from('actor')
+        .update({
+            description: updateFormData.description,
+            person: {
+                first_name: updateFormData.firstName,
+                last_name: updateFormData.lastName,
+                email: updateFormData.email,
+                phone: updateFormData.phone,
+                address: {
+                    city: updateFormData.city,
+                    street: updateFormData.street,
+                    house_number: updateFormData.houseNumber,
+                    zip_code: updateFormData.zipCode,
+                }
+            }
+        })
+        .eq('id', updateFormData.id)
+        .select();
+
+    if(error !== null || data === null) { throw new Error("Actor not updated");}
+
+    const actor = data[0];
     return {
-        id: updateFormData.id,
-        firstName: updateFormData.firstName,
-        lastName: updateFormData.lastName,
-        description: updateFormData.description,
-        email: updateFormData.email,
-        phone: updateFormData.phone,
+        id: actor.id,
+        firstName: actor.person.first_name,
+        lastName: actor.person.last_name,
+        description: actor.description,
+        email: actor.person.email,
+        phone: actor.person.phone,
         address: {
-            id: updateFormData.addressId,
-            city: updateFormData.city,
-            street: updateFormData.street,
-            houseNumber: updateFormData.houseNumber,
-            zipCode: updateFormData.zipCode,
-        },
+            id: actor.person.address.id,
+            city: actor.person.address.city,
+            street: actor.person.address.street,
+            houseNumber: actor.person.address.house_number,
+            zipCode: actor.person.address.zip_code,
+        }
     };
 }
 
 export async function dbDeleteActor(id: number): Promise<void> {
+    const { data, error } = await supabase
+        .from('actor')
+        .delete()
+        .eq('id', id)
+        .select();
+
+    if(error !== null || data === null) { throw new Error("Actor not deleted");}
     return;
 }
