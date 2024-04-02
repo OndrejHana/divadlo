@@ -38,7 +38,7 @@ export async function dbGetPlay(id: number): Promise<Play | undefined> {
         .select('*')
         .eq('id', id);
 
-    if(data === undefined) return undefined;
+    if(data === undefined || data?.length === 0) return undefined;
     if(error !== null) { throw new Error(error.message); }
 
     const play: Play = {

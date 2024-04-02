@@ -57,7 +57,7 @@ export async function dbGetEvent(id: number): Promise<Event | null> {
         `)
         .eq('id', id);
     
-    if(data === undefined) return null;
+    if(data === undefined || data === null || data.length === 0) return null;
     if(error !== null) { throw new Error(error.message); }
 
     const event  = data[0];
