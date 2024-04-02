@@ -1,67 +1,118 @@
 import { AddPlayFormObject, Play, UpdatePlayFormObject } from "@/types/play";
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL or key is missing.');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 export async function dbGetPlays(): Promise<Play[]> {
-    return [
-        {
-            id: 1,
-            name: "The Phantom of the Opera",
-            description:
-                "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
-            yearOfRelease: 1986,
-            author: "Andrew Lloyd Webber",
-        },
-        {
-            id: 2,
-            name: "The Lion King",
-            description:
-                "Lion cub and future king Simba searches for his identity. His eagerness to please others and penchant for testing his boundaries sometimes gets him into trouble.",
-            yearOfRelease: 1994,
-            author: "Elton John",
-        },
-        {
-            id: 3,
-            name: "Cats",
-            author: "Andrew Lloyd Webber",
-            yearOfRelease: 1981,
-            description:
-                "A tribe of cats called the Jellicles must decide yearly which one will ascend to the Heaviside Layer and come back to a new Jellicle life.",
-        },
-    ];
+    const { data, error } = await supabase
+        .from('play')
+        .select('*');
+
+    if(data === undefined) return [];
+    if(error !== null) { throw new Error(error.message); }
+
+    const plays: Play[] = (data as { id: number; description: string; name: string; author: string; yearOfRelease: number; }[]).map((play: any) => {
+        const Play: Play = {
+            id: play.id,
+            name: play.name,
+            description: play.description,
+            yearOfRelease: play.year_of_release,
+            author: play.author
+        };
+        return Play;
+    });
+    return plays;
 }
 
 export async function dbGetPlay(id: number): Promise<Play | undefined> {
-    return {
-        id: 1,
-        name: "The Phantom of the Opera",
-        description:
-            "A disfigured musical genius, hidden away in the Paris Opera House, terrorizes the opera company for the unwitting benefit of a young protégée whom he trains and loves.",
-        author: "Andrew Lloyd Webber",
-        yearOfRelease: 1986,
+    const { data, error } = await supabase
+        .from('play')
+        .select('*')
+        .eq('id', id);
+
+    if(data === undefined) return undefined;
+    if(error !== null) { throw new Error(error.message); }
+
+    const play: Play = {
+        id: data[0].id,
+        name: data[0].name,
+        description: data[0].description,
+        yearOfRelease: data[0].year_of_release,
+        author: data[0].author
     };
+
+    return play;
 }
 
 export async function dbAddPlay(addPlayData: AddPlayFormObject): Promise<Play> {
-    return {
-        id: 1,
-        name: addPlayData.name,
-        description: addPlayData.description,
-        yearOfRelease: addPlayData.yearOfRelease,
-        author: addPlayData.author,
+    const { data, error } = await supabase
+        .from('play')
+        .insert([
+            {
+                name: addPlayData.name,
+                description: addPlayData.description,
+                year_of_release: addPlayData.yearOfRelease,
+                author: addPlayData.author
+            }
+        ])
+        .select();
+    
+    if(data === undefined) { throw new Error("Error adding play"); }
+    if(error !== null) { throw new Error(error.message); }
+
+    const play: Play = {
+        id: data[0].id,
+        name: data[0].name,
+        description: data[0].description,
+        yearOfRelease: data[0].year_of_release,
+        author: data[0].author
     };
+
+    return play;
+                
 }
 
 export async function dbUpdatePlay(
     updatePlayData: UpdatePlayFormObject,
 ): Promise<Play> {
-    return {
-        id: updatePlayData.id,
-        name: updatePlayData.name,
-        description: updatePlayData.description,
-        yearOfRelease: updatePlayData.yearOfRelease,
-        author: updatePlayData.author,
+    const { data, error } = await supabase
+        .from('play')
+        .update({
+            name: updatePlayData.name,
+            description: updatePlayData.description,
+            year_of_release: updatePlayData.yearOfRelease,
+            author : updatePlayData.author
+        })
+        .eq('id', updatePlayData.id)
+        .select()
+
+    if(data === undefined) { throw new Error("Error updating play"); }
+    if(error !== null) { throw new Error(error.message); }
+
+    const play: Play = {
+        id: data[0].id,
+        name: data[0].name,
+        description: data[0].description,
+        yearOfRelease: data[0].year_of_release,
+        author: data[0].author
     };
+
+    return play;
 }
 
 export async function dbDeletePlay(id: number): Promise<void> {
-    return;
+    const { error } = await supabase
+        .from('play')
+        .delete()
+        .eq('id', id);
+
+    if(error !== null) { throw new Error(error.message); }
 }

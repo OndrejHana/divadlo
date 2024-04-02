@@ -5,9 +5,9 @@ import {
 } from "@/types/actor";
 
 import { createClient } from '@supabase/supabase-js'
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey: string = process.env.NEXT_PUBLIC_SUPABASE_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase
@@ -22,7 +22,7 @@ export async function dbGetActors(): Promise<Actor[]> {
 
     console.log(data);
     console.log(error);
-    if(error !== null) { throw new Error(error);}
+    if(error !== null) { throw new Error(error.message);}
     if(data === null || data === undefined) { throw new Error("Error getting actors");}
 
     const actors: Actor[] = data?.map((actor: any) => {
@@ -60,13 +60,16 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
         .eq('id', id)
         .limit(1);
             
+
+    if(data === undefined) { return undefined;}
     if(data === null || data.length != 1) { return undefined;}
-    if(error !== null) { throw new Error("Error getting actor");}
+    if(error !== null) { throw new Error(error.message);}
 
     const actor = data[0];
-    return {
+
+    const Actor: Actor = {
         id: actor.id,
-        firstName: actor.person.first_name,
+        firstName: actor.person.firstName,
         lastName: actor.person.last_name,
         description: actor.description,
         email: actor.person.email,
@@ -78,7 +81,8 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
             houseNumber: actor.person.address.house_number,
             zipCode: actor.person.address.zip_code,
         }
-    };
+    }
+    return Actor;
 }
 
 export async function dbAddActor(
@@ -148,7 +152,8 @@ export async function dbUpdateActor(
         .eq('id', updateFormData.id)
         .select();
 
-    if(error !== null || data === null) { throw new Error("Actor not updated");}
+    
+    if(error !== null || data === null) { throw new Error(error.message);}
 
     const actor = data[0];
     return {
@@ -172,9 +177,7 @@ export async function dbDeleteActor(id: number): Promise<void> {
     const { data, error } = await supabase
         .from('actor')
         .delete()
-        .eq('id', id)
-        .select();
-
-    if(error !== null || data === null) { throw new Error("Actor not deleted");}
+        .eq('id', id);
+    if(error !== null) { throw new Error(error.message);}
     return;
 }
