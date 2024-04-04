@@ -5,8 +5,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import { addPlayAction } from "@/server/plays";
 import { AddPlayFormState } from "@/types/play";
+import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialState: AddPlayFormState = {
@@ -25,7 +27,17 @@ function SubmitButton() {
 }
 
 export default function AddPlayForm() {
-    const [_, formAction] = useFormState(addPlayAction, initialState);
+    const [state, formAction] = useFormState(addPlayAction, initialState);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Přidat divadelní hru",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     return (
         <Card className="flex w-full max-w-2xl flex-col gap-2 overflow-hidden rounded-none">
@@ -36,9 +48,6 @@ export default function AddPlayForm() {
                 <p>Přidejte novou divadelní hru do systému</p>
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
-                {!!initialState.message && (
-                    <p className="text-red-500">{initialState.message}</p>
-                )}
                 <Label htmlFor="name" className="text-md">
                     Název hry
                 </Label>

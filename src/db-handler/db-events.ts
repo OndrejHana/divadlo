@@ -84,24 +84,22 @@ export async function dbGetEvent(id: number): Promise<Event | null> {
         throw new Error(error);
     }
 
-    const event = data[0];
-    const play = event.play[0];
-    const hall = event.hall[0];
+    const event: any = data[0];
 
     const Event: Event = {
         id: event.id,
         time: new Date(event.time),
         play: {
-            id: play.id,
-            name: play.name,
-            author: play.author,
-            description: play.description,
-            yearOfRelease: play.year_of_release,
+            id: event.play.id,
+            name: event.play.name,
+            author: event.play.author,
+            description: event.play.description,
+            yearOfRelease: event.play.year_of_release,
         },
         hall: {
-            id: hall.id,
-            name: hall.name,
-            numberOfSeats: hall.number_of_seats,
+            id: event.hall.id,
+            name: event.hall.name,
+            numberOfSeats: event.hall.number_of_seats,
         },
     };
 
@@ -131,24 +129,22 @@ export async function dbAddEvent(
         throw new Error(error.message);
     }
 
-    const event = data[0];
-    const play = event.play[0];
-    const hall = event.hall[0];
+    const event: any = data[0];
 
     const Event: Event = {
         id: event.id,
         time: new Date(event.time),
         play: {
-            id: play.id,
-            name: play.name,
-            yearOfRelease: play.year_of_release,
-            description: play.description,
-            author: play.author,
+            id: event.play.id,
+            name: event.play.name,
+            yearOfRelease: event.play.year_of_release,
+            description: event.play.description,
+            author: event.play.author,
         },
         hall: {
-            id: hall.id,
-            name: hall.name,
-            numberOfSeats: hall.number_of_seats,
+            id: event.hall.id,
+            name: event.hall.name,
+            numberOfSeats: event.hall.number_of_seats,
         },
     };
 
@@ -179,24 +175,22 @@ export async function dbUpdateEvent(
         throw new Error(error.message);
     }
 
-    const event = data[0];
-    const play = event.play[0];
-    const hall = event.hall[0];
+    const event: any = data[0];
 
     const Event: Event = {
         id: event.id,
         time: new Date(event.time),
         play: {
-            id: play.id,
-            name: play.name,
-            author: play.author,
-            yearOfRelease: play.year_of_release,
-            description: play.description,
+            id: event.play.id,
+            name: event.play.name,
+            author: event.play.author,
+            yearOfRelease: event.play.year_of_release,
+            description: event.play.description,
         },
         hall: {
-            id: hall.id,
-            name: hall.name,
-            numberOfSeats: hall.number_of_seats,
+            id: event.hall.id,
+            name: event.hall.name,
+            numberOfSeats: event.hall.number_of_seats,
         },
     };
 

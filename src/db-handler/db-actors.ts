@@ -14,13 +14,11 @@ export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
             id, 
             description,
-            person(first_name, last_name, email, phone,
-                address(city, street, house_number, zip_code)
+            person(id, first_name, last_name, email, phone,
+                address(id, city, street, house_number, zip_code)
             )
         `);
 
-    console.log(data);
-    console.log(error);
     if (error !== null) {
         throw new Error(error.message);
     }
@@ -77,28 +75,26 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
         throw new Error(error);
     }
 
-    const actor = data[0];
-    const person = actor.person[0];
-    const address = person.address[0];
-
+    const actor: any = data[0];
     const Actor: Actor = {
         id: actor.id,
         description: actor.description,
         person: {
-            id: person.id,
-            firstName: person.first_name,
-            lastName: person.last_name,
-            email: person.email,
-            phone: person.phone,
+            id: actor.person.id,
+            firstName: actor.person.first_name,
+            lastName: actor.person.last_name,
+            email: actor.person.email,
+            phone: actor.person.phone,
             address: {
-                id: address.id,
-                city: address.city,
-                street: address.street,
-                houseNumber: address.house_number,
-                zipCode: address.zip_code,
+                id: actor.person.address.id,
+                city: actor.person.address.city,
+                street: actor.person.address.street,
+                houseNumber: actor.person.address.house_number,
+                zipCode: actor.person.address.zip_code,
             },
         },
     };
+
     return Actor;
 }
 
@@ -131,7 +127,7 @@ export async function dbAddActor(
                 last_name: addActorData.lastName,
                 email: addActorData.email,
                 phone: addActorData.phone,
-                address_id: addressData[0].id,
+                address_id: address.id,
             },
         ])
         .select();
@@ -250,9 +246,38 @@ export async function dbUpdateActor(
 }
 
 export async function dbDeleteActor(id: number): Promise<void> {
-    const { data, error } = await supabase.from("actor").delete().eq("id", id);
+    const { data, error } = await supabase
+        .from("actor")
+        .delete()
+        .eq("id", id)
+        .select();
     if (error !== null) {
         throw new Error(error.message);
     }
+
+    const actor = data[0];
+
+    const { data: personData, error: personError } = await supabase
+        .from("person")
+        .delete()
+        .eq("id", actor.person_id)
+        .select();
+
+    if (personError !== null || personData === null) {
+        throw new Error(personError.message);
+    }
+
+    const person = personData[0];
+
+    const { data: addressData, error: addressError } = await supabase
+        .from("address")
+        .delete()
+        .eq("id", person.address_id)
+        .select();
+
+    if (addressError !== null || addressData === null) {
+        throw new Error(addressError.message);
+    }
+
     return;
 }

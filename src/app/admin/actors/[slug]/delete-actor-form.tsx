@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { deleteActorAction } from "@/server/actors";
+import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 function SubmitButton() {
@@ -16,10 +18,21 @@ function SubmitButton() {
 }
 
 export default function DeleteActorForm({ actorId }: { actorId: number }) {
-    const [_, formAction] = useFormState(deleteActorAction, {
+    const [state, formAction] = useFormState(deleteActorAction, {
         actorId: { id: actorId },
         message: "",
     });
+
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Smazat herce",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     return (
         <form action={formAction}>

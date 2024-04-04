@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AddHallFormState } from "@/types/hall";
 import { addHallAction } from "@/server/halls";
+import ErrorBanner from "@/components/error-banner";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const initialState: AddHallFormState = {
     hall: undefined,
@@ -23,13 +26,20 @@ function SubmitButton() {
 }
 
 export default function AddHallForm() {
-    const [_, formAction] = useFormState(addHallAction, initialState);
+    const [state, formAction] = useFormState(addHallAction, initialState);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Přidat sál",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     return (
         <form action={formAction} className="flex flex-col gap-2 p-4">
-            {!!initialState.message && (
-                <p className="text-red-500">{initialState.message}</p>
-            )}
             <Label htmlFor="hallName" className="text-md">
                 Název sálu
             </Label>

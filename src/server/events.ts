@@ -21,9 +21,9 @@ export async function addEventAction(
     formData: FormData,
 ): Promise<AddEventFormState> {
     const data = ZAddEventFormObject.safeParse({
-        playId: formData.get("playId"),
-        hallId: formData.get("hallId"),
-        time: formData.get("time"),
+        playId: parseInt(formData.get("playId") as string),
+        hallId: parseInt(formData.get("hallId") as string),
+        time: new Date(formData.get("time") as string),
     });
 
     if (!data.success) {
@@ -34,19 +34,17 @@ export async function addEventAction(
     }
 
     const parsedEvent = data.data;
-    console.log(parsedEvent);
-
     try {
         await dbAddEvent(parsedEvent);
+        revalidatePath("/admin/events");
     } catch (e) {
         console.error(e);
         return {
             ...prevState,
-            message: "Error adding event",
+            message: "Událost nemohla být přidána",
         };
     }
 
-    revalidatePath("/admin/events");
     redirect("/admin/events");
 }
 
@@ -54,7 +52,6 @@ export async function updateEvent(
     prevState: UpdateEventFormState,
     formData: FormData,
 ): Promise<UpdateEventFormState> {
-    console.log(formData);
     const data = ZUpdateEventFormObject.safeParse({
         id: parseInt(formData.get("id") as string),
         playId: parseInt(formData.get("playId") as string),
@@ -69,10 +66,6 @@ export async function updateEvent(
     }
 
     const event = data.data;
-    console.log(event);
-    console.log(
-        event.time.toLocaleString("cs-CZ", { timeZone: "Europe/Prague" }),
-    );
 
     try {
         const newEvent = await dbUpdateEvent(event);
@@ -86,12 +79,12 @@ export async function updateEvent(
                 hallId: newEvent.hall.id,
                 time: newEvent.time,
             },
-            message: "Event updated successfully",
+            message: "Událost byla upravena",
         };
     } catch (e) {
         console.error(e);
         return {
-            message: "Error updating event",
+            message: "Událost nemohla být upravena",
         };
     }
 }
@@ -113,13 +106,13 @@ export async function deleteEvent(
     const { id } = data.data;
     try {
         await dbDeleteEvent(id);
+        revalidatePath("/admin/events");
     } catch (e) {
         console.error(e);
         return {
-            message: "Error deleting event",
+            message: "Událost nemohla být smazána",
         };
     }
 
-    revalidatePath("/admin/events");
     redirect("/admin/events");
 }

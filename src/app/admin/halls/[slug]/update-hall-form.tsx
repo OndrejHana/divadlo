@@ -8,7 +8,8 @@ import { updateHallAction } from "@/server/halls";
 import { Hall } from "@/types/hall";
 import { useFormState, useFormStatus } from "react-dom";
 import DeleteHallForm from "./delete-hall-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -30,6 +31,17 @@ export default function UpdataHallForm({ hall }: { hall: Hall }) {
         message: "",
     });
 
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Upravit sál",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
+
     const [hallName, setHallName] = useState(hall.name);
     const [numberOfSeats, setNumberOfSeats] = useState(hall.numberOfSeats);
 
@@ -45,9 +57,6 @@ export default function UpdataHallForm({ hall }: { hall: Hall }) {
                 <DeleteHallForm hallId={hall.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
-                {!!state.message && (
-                    <p className="text-red-500">{state.message}</p>
-                )}
                 <Input type="hidden" name="id" value={hall.id} />
                 <Label htmlFor="name">Název sálu</Label>
                 <Input

@@ -29,29 +29,16 @@ export async function addHallAction(
     }
 
     const hallFormData = data.data;
-    const _ = await dbAddHall(hallFormData);
 
-    revalidatePath("/admin/halls");
-    redirect("/admin/halls");
-}
-
-export async function deleteHallAction(
-    prevState: DeleteHallFormState,
-    formData: FormData,
-): Promise<DeleteHallFormState> {
-    const data = ZDeleteHallFormObject.safeParse({
-        id: parseInt(formData.get("id") as string),
-    });
-
-    if (!data.success) {
+    try {
+        const newHall = await dbAddHall(hallFormData);
+    } catch (e) {
+        console.error(e);
         return {
-            ...prevState.hall,
-            message: data.error.errors.map((e) => e.message).join(", "),
+            ...prevState,
+            message: "Sál nemohl být přidán",
         };
     }
-
-    const hallFormData = data.data;
-    await dbDeleteHall(hallFormData.id);
 
     revalidatePath("/admin/halls");
     redirect("/admin/halls");
@@ -78,6 +65,7 @@ export async function updateHallAction(
     const updatedHall = await dbUpdateHall(hallFormData);
 
     revalidatePath("/admin/halls");
+    revalidatePath("/admin/events");
     revalidatePath(`/admin/halls/${updatedHall.id}`);
 
     return {
@@ -88,4 +76,35 @@ export async function updateHallAction(
         },
         message: "Sál byl upraven",
     };
+}
+
+export async function deleteHallAction(
+    prevState: DeleteHallFormState,
+    formData: FormData,
+): Promise<DeleteHallFormState> {
+    const data = ZDeleteHallFormObject.safeParse({
+        id: parseInt(formData.get("id") as string),
+    });
+
+    if (!data.success) {
+        return {
+            ...prevState.hall,
+            message: data.error.errors.map((e) => e.message).join(", "),
+        };
+    }
+
+    const hallFormData = data.data;
+    try {
+        await dbDeleteHall(hallFormData.id);
+
+        revalidatePath("/admin/halls");
+    } catch (error) {
+        console.log(error);
+        return {
+            hall: prevState.hall,
+            message:
+                "Sál nemohl být smazán, protože je používán v některém z představení.",
+        };
+    }
+    redirect("/admin/halls");
 }

@@ -8,8 +8,8 @@ import { updatePlayAction } from "@/server/plays";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import ErrorBanner from "@/components/error-banner";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -32,7 +32,18 @@ export default function UpdatePlayForm({ play }: { play: Play }) {
         },
         message: "",
     };
-    const [_, formAction] = useFormState(updatePlayAction, initialState);
+    const [state, formAction] = useFormState(updatePlayAction, initialState);
+
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Upravit divadelní hru",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     const [name, setName] = useState(play.name);
     const [author, setAuthor] = useState(play.author);
@@ -51,9 +62,6 @@ export default function UpdatePlayForm({ play }: { play: Play }) {
                 <DeletePlayForm playId={play.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
-                {!!initialState.message && (
-                    <ErrorBanner message={initialState.message} />
-                )}
                 <Input type="hidden" name="id" value={play.id} />
                 <Label htmlFor="name">Název hry</Label>
                 <Input

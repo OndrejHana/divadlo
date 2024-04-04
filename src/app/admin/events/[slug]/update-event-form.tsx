@@ -8,9 +8,9 @@ import { Event, UpdateEventFormState } from "@/types/event";
 import { useFormState, useFormStatus } from "react-dom";
 import DeleteEventForm from "./delete-event-form";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateTimePicker } from "@/components/datetime-picker";
-import ErrorBanner from "@/components/error-banner";
+import { useToast } from "@/components/ui/use-toast";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -40,6 +40,17 @@ export default function UpdateEventForm({
     };
     const [state, formAction] = useFormState(updateEvent, initialState);
 
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Upravit událost",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
+
     const [time, setTime] = useState(event.time);
 
     return (
@@ -56,7 +67,6 @@ export default function UpdateEventForm({
                 <DeleteEventForm eventId={event.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
-                {!!state.message && <ErrorBanner message={state.message} />}
                 <Input type="hidden" name="id" value={event.id} />
                 {children}
                 <Label htmlFor="time">Čas</Label>

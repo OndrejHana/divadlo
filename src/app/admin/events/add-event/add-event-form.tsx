@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { addEventAction } from "@/server/events";
 import { Label } from "@/components/ui/label";
 import { DateTimePicker } from "@/components/datetime-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ErrorBanner from "@/components/error-banner";
+import { useToast } from "@/components/ui/use-toast";
 
 const initialState: AddEventFormState = {
     event: undefined,
@@ -33,11 +34,21 @@ export default function AddEventForm({
 }) {
     const [state, formAction] = useFormState(addEventAction, initialState);
 
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Přidat událost",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
+
     const [time, setTime] = useState(new Date());
 
     return (
         <form action={formAction} className="flex flex-col gap-2 p-4">
-            {!!state.message && <ErrorBanner message={state.message} />}
             {children}
             <Label htmlFor="time">Čas</Label>
             <Input type="hidden" name="time" value={time.toISOString()} />

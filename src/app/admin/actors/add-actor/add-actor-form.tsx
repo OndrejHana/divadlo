@@ -7,7 +7,8 @@ import { AddActorFormState } from "@/types/actor";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { addActorAction } from "@/server/actors";
-import ErrorBanner from "@/components/error-banner";
+import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const initialState: AddActorFormState = {
     actor: undefined,
@@ -26,10 +27,19 @@ function SubmitButton() {
 
 export default function AddActorForm() {
     const [state, formAction] = useFormState(addActorAction, initialState);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Přidat herce",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     return (
         <form action={formAction} className="flex flex-col gap-2 p-4">
-            {!!state.message && <ErrorBanner message={state.message} />}
             <Label htmlFor="firstName" className="text-md">
                 Jméno herce
             </Label>

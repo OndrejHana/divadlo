@@ -8,9 +8,10 @@ import { updateActorAction } from "@/server/actors";
 import { Actor, UpdateActorFormState } from "@/types/actor";
 import { useFormState, useFormStatus } from "react-dom";
 import DeleteActorForm from "./delete-actor-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ErrorBanner from "@/components/error-banner";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -43,6 +44,17 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
 
     const [state, formAction] = useFormState(updateActorAction, initialState);
 
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Upravit herce",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
+
     const [firstName, setFirstName] = useState(actor.person.firstName);
     const [lastName, setLastName] = useState(actor.person.lastName);
     const [description, setDescription] = useState(actor.description);
@@ -73,7 +85,6 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
                 <DeleteActorForm actorId={actor.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
-                {!!state.message && <ErrorBanner message={state.message} />}
                 <Input type="hidden" name="id" value={state.actor.id} />
                 <Input
                     type="hidden"

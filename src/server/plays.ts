@@ -34,7 +34,6 @@ export async function addPlayAction(
     try {
         const newPlay = await dbAddPlay(playFormData);
         revalidatePath("/admin/plays");
-        redirect("/admin/plays");
     } catch (e) {
         console.error(e);
         return {
@@ -42,6 +41,7 @@ export async function addPlayAction(
             message: "Hra nemohla být přidána",
         };
     }
+    redirect("/admin/plays");
 }
 
 export async function updatePlayAction(
@@ -64,14 +64,22 @@ export async function updatePlayAction(
     }
 
     const playFormData = data.data;
-    const updatedPlay = await dbUpdatePlay(playFormData);
+    try {
+        const updatedPlay = await dbUpdatePlay(playFormData);
+        revalidatePath("/admin/plays");
+        revalidatePath(`/admin/plays/${updatedPlay.id}`);
 
-    revalidatePath("/admin/plays");
-
-    return {
-        play: updatedPlay,
-        message: "Hra byla upravena",
-    };
+        return {
+            play: updatedPlay,
+            message: "Hra byla upravena",
+        };
+    } catch (e) {
+        console.error(e);
+        return {
+            ...prevState,
+            message: "Hra nemohla být upravena",
+        };
+    }
 }
 
 export async function deletePlayAction(
@@ -90,8 +98,17 @@ export async function deletePlayAction(
     }
 
     const { id } = data.data;
-    await dbDeletePlay(id);
+    try {
+        await dbDeletePlay(id);
 
-    revalidatePath("/admin/plays");
+        revalidatePath("/admin/plays");
+    } catch (e) {
+        console.error(e);
+        return {
+            play: prevState.play,
+            message:
+                "Hra nemohla být smazána, protože je použita v nějaké události.",
+        };
+    }
     redirect("/admin/plays");
 }

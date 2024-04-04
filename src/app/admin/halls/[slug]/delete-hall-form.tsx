@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { deleteHallAction } from "@/server/halls";
 import { DeleteHallFormState } from "@/types/hall";
+import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 function SubmitButton() {
@@ -23,7 +25,18 @@ export default function DeleteHallForm({ hallId }: { hallId: number }) {
         },
         message: "",
     };
-    const [_, formAction] = useFormState(deleteHallAction, initialState);
+    const [state, formAction] = useFormState(deleteHallAction, initialState);
+
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (!!state.message) {
+            toast({
+                title: "Smazat sál",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
 
     return (
         <form action={formAction}>

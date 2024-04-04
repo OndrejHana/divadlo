@@ -80,28 +80,35 @@ export async function updateActorAction(
     }
 
     const actorFormData = data.data;
-    const actor = await dbUpdateActor(actorFormData);
+    try {
+        const actor = await dbUpdateActor(actorFormData);
 
-    revalidatePath("/admin/actors");
-    revalidatePath(`/admin/actors/${actorFormData.id}`);
+        revalidatePath("/admin/actors");
+        revalidatePath(`/admin/actors/${actorFormData.id}`);
 
-    return {
-        actor: {
-            id: actor.id,
-            description: actor.description,
-            personId: actor.person.id,
-            firstName: actor.person.firstName,
-            lastName: actor.person.lastName,
-            email: actor.person.email,
-            phone: actor.person.phone,
-            addressId: actor.person.address.id,
-            city: actor.person.address.city,
-            street: actor.person.address.street,
-            houseNumber: actor.person.address.houseNumber,
-            zipCode: actor.person.address.zipCode,
-        },
-        message: "Herec byl upraven",
-    };
+        return {
+            actor: {
+                id: actor.id,
+                description: actor.description,
+                personId: actor.person.id,
+                firstName: actor.person.firstName,
+                lastName: actor.person.lastName,
+                email: actor.person.email,
+                phone: actor.person.phone,
+                addressId: actor.person.address.id,
+                city: actor.person.address.city,
+                street: actor.person.address.street,
+                houseNumber: actor.person.address.houseNumber,
+                zipCode: actor.person.address.zipCode,
+            },
+            message: "Herec byl upraven",
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            message: "Nepodařilo se upravit herce",
+        };
+    }
 }
 
 export async function deleteActorAction(
@@ -119,8 +126,14 @@ export async function deleteActorAction(
     }
 
     const actorFormData = data.data;
-    await dbDeleteActor(actorFormData.id);
-
-    revalidatePath("/admin/actors");
+    try {
+        await dbDeleteActor(actorFormData.id);
+        revalidatePath("/admin/actors");
+    } catch (error) {
+        console.log(error);
+        return {
+            message: "Nepodařilo se smazat herce, na herce se odkazuje",
+        };
+    }
     redirect("/admin/actors");
 }
