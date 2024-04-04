@@ -1,27 +1,30 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { deleteActorAction } from "@/server/actors";
-import { DeleteActorFormState } from "@/types/actor";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
-const initialState: DeleteActorFormState = {
-    message: "",
-};
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button variant="destructive" type="submit" disabled={pending}>
+            Smazat herce
+        </Button>
+    );
+}
 
 export default function DeleteActorForm({ actorId }: { actorId: number }) {
-    const [_, formAction] = useFormState(deleteActorAction, initialState);
+    const [_, formAction] = useFormState(deleteActorAction, {
+        actorId: { id: actorId },
+        message: "",
+    });
 
     return (
         <form action={formAction}>
-            <input type="hidden" name="id" value={actorId} />
-            <Button
-                variant="destructive"
-                type="submit"
-                className="rounded-md bg-red-500 p-2 text-white"
-            >
-                Smazat herce
-            </Button>
+            <Input type="hidden" name="id" value={actorId} />
+            <SubmitButton />
         </form>
     );
 }

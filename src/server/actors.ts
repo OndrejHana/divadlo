@@ -1,3 +1,5 @@
+"use server";
+
 import {
     dbAddActor,
     dbDeleteActor,
@@ -12,15 +14,22 @@ import {
     ZUpdateActorFormObject,
 } from "@/types/actor";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function addActorAction(
     prevState: AddActorFormState,
     formData: FormData,
 ): Promise<AddActorFormState> {
     const data = ZAddActorFormObject.safeParse({
-        name: formData.get("name") as string,
-        surname: formData.get("surname") as string,
-        birth: new Date(formData.get("birth") as string),
+        firstName: formData.get("firstName") as string,
+        lastName: formData.get("lastName") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+        description: formData.get("description") as string,
+        city: formData.get("city") as string,
+        street: formData.get("street") as string,
+        houseNumber: parseInt(formData.get("houseNumber") as string),
+        zipCode: formData.get("zipCode") as string,
     });
 
     if (!data.success) {
@@ -31,14 +40,17 @@ export async function addActorAction(
     }
 
     const actorFormData = data.data;
-    await dbAddActor(actorFormData);
+    try {
+        await dbAddActor(actorFormData);
+    } catch (error) {
+        console.log(error);
+        return {
+            message: "Nepodařilo se přidat herce",
+        };
+    }
 
     revalidatePath("/admin/actors");
-
-    return {
-        actor: undefined,
-        message: "Herec byl vytvořen",
-    };
+    redirect("/admin/actors");
 }
 
 export async function updateActorAction(
@@ -47,9 +59,10 @@ export async function updateActorAction(
 ): Promise<UpdateActorFormState> {
     const data = ZUpdateActorFormObject.safeParse({
         id: parseInt(formData.get("id") as string),
+        description: formData.get("description") as string,
+        personId: parseInt(formData.get("personId") as string),
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
-        description: formData.get("description") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
         addressId: parseInt(formData.get("addressId") as string),
@@ -67,11 +80,26 @@ export async function updateActorAction(
     }
 
     const actorFormData = data.data;
-    await dbUpdateActor(actorFormData);
+    const actor = await dbUpdateActor(actorFormData);
 
     revalidatePath("/admin/actors");
+    revalidatePath(`/admin/actors/${actorFormData.id}`);
 
     return {
+        actor: {
+            id: actor.id,
+            description: actor.description,
+            personId: actor.person.id,
+            firstName: actor.person.firstName,
+            lastName: actor.person.lastName,
+            email: actor.person.email,
+            phone: actor.person.phone,
+            addressId: actor.person.address.id,
+            city: actor.person.address.city,
+            street: actor.person.address.street,
+            houseNumber: actor.person.address.houseNumber,
+            zipCode: actor.person.address.zipCode,
+        },
         message: "Herec byl upraven",
     };
 }
@@ -94,8 +122,5 @@ export async function deleteActorAction(
     await dbDeleteActor(actorFormData.id);
 
     revalidatePath("/admin/actors");
-
-    return {
-        message: "Herec byl smazán",
-    };
+    redirect("/admin/actors");
 }

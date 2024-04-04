@@ -30,7 +30,7 @@ export default async function UpcomingEvents() {
                             <div className="font-bold">{event.play.name}</div>
                             <div className="flex gap-2">
                                 <div className="text-muted-foreground">
-                                    {dayjs(event.time).format(
+                                    {dayjs(event.time.toLocaleString()).format(
                                         "D. M. YYYY HH:mm",
                                     )}
                                 </div>

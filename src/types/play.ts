@@ -43,5 +43,6 @@ export type UpdatePlayFormState = {
 };
 
 export type DeletePlayFormState = {
+    play: DeletePlayFormObject;
     message: string;
 };

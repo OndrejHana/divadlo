@@ -5,17 +5,33 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateHallAction } from "@/server/halls";
-import { Hall, UpdateHallFormState } from "@/types/hall";
-import { useFormState } from "react-dom";
+import { Hall } from "@/types/hall";
+import { useFormState, useFormStatus } from "react-dom";
 import DeleteHallForm from "./delete-hall-form";
+import { useState } from "react";
 
-const initialState: UpdateHallFormState = {
-    hall: undefined,
-    message: "",
-};
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button variant="default" type="submit" disabled={pending}>
+            Upravit sál
+        </Button>
+    );
+}
 
 export default function UpdataHallForm({ hall }: { hall: Hall }) {
-    const [_, formAction] = useFormState(updateHallAction, initialState);
+    const [state, formAction] = useFormState(updateHallAction, {
+        hall: {
+            id: hall.id,
+            name: hall.name,
+            numberOfSeats: hall.numberOfSeats,
+        },
+        message: "",
+    });
+
+    const [hallName, setHallName] = useState(hall.name);
+    const [numberOfSeats, setNumberOfSeats] = useState(hall.numberOfSeats);
 
     return (
         <Card className="w-full max-w-2xl">
@@ -29,18 +45,25 @@ export default function UpdataHallForm({ hall }: { hall: Hall }) {
                 <DeleteHallForm hallId={hall.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
+                {!!state.message && (
+                    <p className="text-red-500">{state.message}</p>
+                )}
                 <Input type="hidden" name="id" value={hall.id} />
                 <Label htmlFor="name">Název sálu</Label>
-                <Input type="text" name="name" value={hall.name} />
+                <Input
+                    type="text"
+                    name="name"
+                    value={hallName}
+                    onChange={(e) => setHallName(e.target.value)}
+                />
                 <Label htmlFor="numberOfSeats">Počet sedadel</Label>
                 <Input
                     type="number"
                     name="numberOfSeats"
-                    value={hall.numberOfSeats}
+                    value={numberOfSeats}
+                    onChange={(e) => setNumberOfSeats(parseInt(e.target.value))}
                 />
-                <Button type="submit" variant="default">
-                    Upravit sál
-                </Button>
+                <SubmitButton />
             </form>
         </Card>
     );

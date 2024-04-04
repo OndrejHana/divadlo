@@ -27,7 +27,7 @@ export default async function ActorList() {
                     >
                         <div className="flex gap-2">
                             <h3 className="font-medium">
-                                {actor.firstName} {actor.lastName}
+                                {actor.person.firstName} {actor.person.lastName}
                             </h3>
                         </div>
                     </Link>

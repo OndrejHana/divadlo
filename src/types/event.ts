@@ -42,5 +42,6 @@ export type UpdateEventFormState = {
 };
 
 export type DeleteEventFormState = {
+    event?: DeleteEventFormObject;
     message: string;
 };

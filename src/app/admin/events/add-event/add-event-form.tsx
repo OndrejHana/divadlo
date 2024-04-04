@@ -7,6 +7,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { addEventAction } from "@/server/events";
 import { Label } from "@/components/ui/label";
+import { DateTimePicker } from "@/components/datetime-picker";
+import { useState } from "react";
+import ErrorBanner from "@/components/error-banner";
 
 const initialState: AddEventFormState = {
     event: undefined,
@@ -28,24 +31,24 @@ export default function AddEventForm({
 }: {
     children: React.ReactNode;
 }) {
-    const [_, formAction] = useFormState(addEventAction, initialState);
+    const [state, formAction] = useFormState(addEventAction, initialState);
+
+    const [time, setTime] = useState(new Date());
 
     return (
-        <Card className="flex w-full max-w-2xl flex-col gap-2 overflow-hidden rounded-none">
-            <div className="bg-primary p-4">
-                <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight text-primary-foreground">
-                    Přidejte divadelní akci
-                </h1>
-                <p className="text-primary-foreground">
-                    Přidejte novou divadelní akci do systému
-                </p>
-            </div>
-            <form action={formAction} className="flex flex-col gap-2 p-4">
-                {children}
-                <Label htmlFor="time">Čas</Label>
-                <Input type="date" name="time" />
-                <SubmitButton />
-            </form>
-        </Card>
+        <form action={formAction} className="flex flex-col gap-2 p-4">
+            {!!state.message && <ErrorBanner message={state.message} />}
+            {children}
+            <Label htmlFor="time">Čas</Label>
+            <Input type="hidden" name="time" value={time.toISOString()} />
+            <DateTimePicker
+                value={{
+                    date: time,
+                    hasTime: true,
+                }}
+                onChange={({ date }) => setTime(date)}
+            />
+            <SubmitButton />
+        </form>
     );
 }

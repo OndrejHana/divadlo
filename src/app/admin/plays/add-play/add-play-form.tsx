@@ -36,6 +36,9 @@ export default function AddPlayForm() {
                 <p>Přidejte novou divadelní hru do systému</p>
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
+                {!!initialState.message && (
+                    <p className="text-red-500">{initialState.message}</p>
+                )}
                 <Label htmlFor="name" className="text-md">
                     Název hry
                 </Label>

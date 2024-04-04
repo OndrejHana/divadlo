@@ -10,6 +10,7 @@ import {
     ZUpdatePlayFormObject,
 } from "@/types/play";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function addPlayAction(
     prevState: AddPlayFormState,
@@ -30,14 +31,17 @@ export async function addPlayAction(
     }
 
     const playFormData = data.data;
-    const newPlay = await dbAddPlay(playFormData);
-
-    revalidatePath("/admin/plays");
-
-    return {
-        play: newPlay,
-        message: "Hra byla vytvořena",
-    };
+    try {
+        const newPlay = await dbAddPlay(playFormData);
+        revalidatePath("/admin/plays");
+        redirect("/admin/plays");
+    } catch (e) {
+        console.error(e);
+        return {
+            ...prevState,
+            message: "Hra nemohla být přidána",
+        };
+    }
 }
 
 export async function updatePlayAction(
@@ -80,6 +84,7 @@ export async function deletePlayAction(
 
     if (!data.success) {
         return {
+            play: prevState.play,
             message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
@@ -88,8 +93,5 @@ export async function deletePlayAction(
     await dbDeletePlay(id);
 
     revalidatePath("/admin/plays");
-
-    return {
-        message: "Hra byla smazána",
-    };
+    redirect("/admin/plays");
 }

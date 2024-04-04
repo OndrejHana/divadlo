@@ -1,20 +1,23 @@
 "use server";
 
-import { dbAddHall, dbDeleteHall } from "@/db-handler/db-halls";
+import { dbAddHall, dbDeleteHall, dbUpdateHall } from "@/db-handler/db-halls";
 import {
     AddHallFormState,
     DeleteHallFormState,
+    UpdateHallFormState,
     ZAddHallFormObject,
     ZDeleteHallFormObject,
+    ZUpdateHallFormObject,
 } from "@/types/hall";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function addHallAction(
     prevState: AddHallFormState,
     formData: FormData,
 ): Promise<AddHallFormState> {
     const data = ZAddHallFormObject.safeParse({
-        name: formData.get("name") as string,
+        name: formData.get("hallName") as string,
         numberOfSeats: parseInt(formData.get("numberOfSeats") as string),
     });
 
@@ -26,25 +29,23 @@ export async function addHallAction(
     }
 
     const hallFormData = data.data;
-    const newHall = await dbAddHall(hallFormData);
+    const _ = await dbAddHall(hallFormData);
 
-    return {
-        hall: newHall,
-        message: "Hala byla vytvořena",
-    };
+    revalidatePath("/admin/halls");
+    redirect("/admin/halls");
 }
 
 export async function deleteHallAction(
     prevState: DeleteHallFormState,
     formData: FormData,
-): Promise<AddHallFormState> {
+): Promise<DeleteHallFormState> {
     const data = ZDeleteHallFormObject.safeParse({
         id: parseInt(formData.get("id") as string),
     });
 
     if (!data.success) {
         return {
-            ...prevState,
+            ...prevState.hall,
             message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
@@ -53,17 +54,15 @@ export async function deleteHallAction(
     await dbDeleteHall(hallFormData.id);
 
     revalidatePath("/admin/halls");
-
-    return {
-        message: "Hala byla smazána",
-    };
+    redirect("/admin/halls");
 }
 
 export async function updateHallAction(
-    prevState: AddHallFormState,
+    prevState: UpdateHallFormState,
     formData: FormData,
-): Promise<AddHallFormState> {
-    const data = ZAddHallFormObject.safeParse({
+): Promise<UpdateHallFormState> {
+    const data = ZUpdateHallFormObject.safeParse({
+        id: parseInt(formData.get("id") as string),
         name: formData.get("name") as string,
         numberOfSeats: parseInt(formData.get("numberOfSeats") as string),
     });
@@ -76,12 +75,17 @@ export async function updateHallAction(
     }
 
     const hallFormData = data.data;
-    const newHall = await dbAddHall(hallFormData);
+    const updatedHall = await dbUpdateHall(hallFormData);
 
     revalidatePath("/admin/halls");
+    revalidatePath(`/admin/halls/${updatedHall.id}`);
 
     return {
-        hall: newHall,
-        message: "Hala byla vytvořena",
+        hall: {
+            id: updatedHall.id,
+            name: updatedHall.name,
+            numberOfSeats: updatedHall.numberOfSeats,
+        },
+        message: "Sál byl upraven",
     };
 }

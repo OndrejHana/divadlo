@@ -3,21 +3,31 @@
 import { Button } from "@/components/ui/button";
 import { deletePlayAction } from "@/server/plays";
 import { DeletePlayFormState } from "@/types/play";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
-const initialState: DeletePlayFormState = {
-    message: "",
-};
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button variant="destructive" type="submit" disabled={pending}>
+            Smazat hru
+        </Button>
+    );
+}
 
 export default function DeletePlayForm({ playId }: { playId: number }) {
+    const initialState: DeletePlayFormState = {
+        play: {
+            id: playId,
+        },
+        message: "",
+    };
     const [_, formAction] = useFormState(deletePlayAction, initialState);
 
     return (
         <form action={formAction}>
             <input type="hidden" name="id" value={playId} />
-            <Button type="submit" variant="destructive">
-                Smazat hru
-            </Button>
+            <SubmitButton />
         </form>
     );
 }

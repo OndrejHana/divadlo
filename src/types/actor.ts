@@ -8,22 +8,27 @@ export const ZAddress = z.object({
     zipCode: z.string(),
 });
 
-export const ZActor = z.object({
+export const ZPerson = z.object({
     id: z.number().positive(),
     firstName: z.string(),
     lastName: z.string(),
-    description: z.string(),
     email: z.string().email(),
     phone: z.string().length(9),
     address: ZAddress,
 });
 
+export const ZActor = z.object({
+    id: z.number().positive(),
+    description: z.string(),
+    person: ZPerson,
+});
+
 export const ZAddActorFormObject = z.object({
-    firstName: ZActor.shape.firstName,
-    lastName: ZActor.shape.lastName,
     description: ZActor.shape.description,
-    email: ZActor.shape.email,
-    phone: ZActor.shape.phone,
+    firstName: ZActor.shape.person.shape.firstName,
+    lastName: ZActor.shape.person.shape.lastName,
+    email: ZActor.shape.person.shape.email,
+    phone: ZActor.shape.person.shape.phone,
     city: ZAddress.shape.city,
     street: ZAddress.shape.street,
     houseNumber: ZAddress.shape.houseNumber,
@@ -32,11 +37,12 @@ export const ZAddActorFormObject = z.object({
 
 export const ZUpdateActorFormObject = z.object({
     id: ZActor.shape.id,
-    firstName: ZActor.shape.firstName,
-    lastName: ZActor.shape.lastName,
     description: ZActor.shape.description,
-    email: ZActor.shape.email,
-    phone: ZActor.shape.phone,
+    personId: ZPerson.shape.id,
+    firstName: ZActor.shape.person.shape.firstName,
+    lastName: ZActor.shape.person.shape.lastName,
+    email: ZActor.shape.person.shape.email,
+    phone: ZActor.shape.person.shape.phone,
     addressId: ZAddress.shape.id,
     city: ZAddress.shape.city,
     street: ZAddress.shape.street,
@@ -60,6 +66,7 @@ export type AddActorFormState = {
 };
 
 export type DeleteActorFormState = {
+    actorId?: DeleteActorFormObject;
     message: string;
 };
 

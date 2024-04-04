@@ -32,6 +32,7 @@ export type AddHallFormState = {
 };
 
 export type DeleteHallFormState = {
+    hall?: DeleteHallFormObject;
     message: string;
 };
 
