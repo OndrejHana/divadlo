@@ -12,12 +12,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
-            id, 
-            description,
-            person(id, first_name, last_name, email, phone,
-                address(id, city, street, house_number, zip_code)
-            )
+        id,
+        description,
+        person(*)
         `);
+
+    console.log(data)
 
     if (error !== null) {
         throw new Error(error.message);
@@ -34,15 +34,6 @@ export async function dbGetActors(): Promise<Actor[]> {
                 id: actor.person.id,
                 firstName: actor.person.first_name,
                 lastName: actor.person.last_name,
-                email: actor.person.email,
-                phone: actor.person.phone,
-                address: {
-                    id: actor.person.address.id,
-                    city: actor.person.address.city,
-                    street: actor.person.address.street,
-                    houseNumber: actor.person.address.house_number,
-                    zipCode: actor.person.address.zip_code,
-                },
             },
         };
         return Actor;
