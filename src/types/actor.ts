@@ -12,6 +12,7 @@ export const ZPerson = z.object({
     id: z.number().positive(),
     firstName: z.string(),
     lastName: z.string(),
+    address: ZAddress,
 });
 
 export const ZActor = z.object({

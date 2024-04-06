@@ -14,7 +14,8 @@ export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
         id,
         description,
-        person(*)
+        person(id, first_name, last_name, email, phone, 
+            address(id , city, street, house_number, zip_code))
         `);
 
     console.log(data)
