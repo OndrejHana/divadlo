@@ -22,7 +22,7 @@ export default function RootLayout({
             <body
                 className={cn(
                     inter.className,
-                    "flex min-h-screen w-screen flex-col",
+                    "flex min-h-screen w-screen flex-col disable-scroll-x",
                 )}
             >
                 <Nav />
