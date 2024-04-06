@@ -11,7 +11,7 @@ export default function Nav() {
                     Domů
                 </h1>
             </Link>
-            <div className="flex grow items-center gap-2 overflow-scroll">
+            <div className="flex grow items-center gap-2">
                 <Button asChild variant="ghost">
                     <Link href="/">Úvod</Link>
                 </Button>
