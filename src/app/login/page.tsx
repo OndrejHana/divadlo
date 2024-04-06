@@ -17,7 +17,8 @@ export default async function Page() {
                     Heslo
                 </Label>
                 <Input type="password" name="password" placeholder="" />
-                <button className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Přihlásit se</button>
+                <Button variant="default">Přihlásit se</Button>
+                <Button variant="outline">Registrovat se</Button>
             </form>
             </div>
         </main>
