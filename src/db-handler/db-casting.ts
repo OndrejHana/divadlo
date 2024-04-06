@@ -80,7 +80,6 @@ export async function dbGetCastingsForActor(
         .from("casting")
         .select(
             `
-            id,
             character,
             actor(id, description, 
                 person(id, first_name, last_name, email, phone, 

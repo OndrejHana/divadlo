@@ -28,6 +28,9 @@ export default function Nav() {
                     <Link href="/about">O Divadle</Link>
                 </Button>
             </div>
+            <Link href="/login" className="flex h-full items-center">
+                <Button variant="primary">Přihlásit se</Button>
+            </Link>
         </nav>
     );
 }
