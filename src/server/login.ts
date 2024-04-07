@@ -1,7 +1,6 @@
-import { ZLoginFormObject, Credentials } from "@/types/login";
-import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+"use server";
+
+import { ZLoginFormObject, Credentials, LoginUserFormState } from "@/types/login";
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -12,9 +11,10 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export aync function loginUser (
+export async function loginUserAction(
+    prevState: LoginUserFormState,
     formData: FormData, 
-): Promise<void> {
+): Promise<LoginUserFormState> {
     const data = ZLoginFormObject.safeParse({
         email: formData.get("email") as string,
         password: formData.get("password") as string,
@@ -22,11 +22,18 @@ export aync function loginUser (
 
     if (!data.success) {
         return {
+            ...prevState,
             message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
 
+    const loginFormData = data.data;
     const a = await supabaseLoginUser(data.data);
+    if (!a) {
+        return {
+            message: "Nepodařilo se přihlásit",
+        };
+    }
 
     // revalidatePath("/admin");
     // redirect("/admin");
