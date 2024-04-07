@@ -7,33 +7,26 @@ import { Label } from "@/components/ui/label";
 import { addActorAction } from "@/server/actors";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
-import { loginUserAction } from "@/server/login";
-import Link from "next/link";
+import { registerUserAction } from "@/server/register";
+import { RegisterUserFormState } from "@/types/register";
 
-const initialState: LoginUserFormState = {
+const initialState: RegisterUserFormState = {
     user: undefined,
     message: "",
 };
 
-function LoginButton() {
+function RegisterButton() {
     const { pending } = useFormStatus();
 
     return (
         <Button variant="default" type="submit" disabled={pending}>
-            Přihlásti se
+            Registrovat se
         </Button>
     );
 }
-function RegisterButton() {
-    return (
-        <Link href="/register">
-            <Button variant="outline" className="w-full">Registrovat se</Button>
-        </Link>
-    );
-}
 
-export default function AddLoginUserForm() {
-    const [state, formAction] = useFormState(loginUserAction, initialState);
+export default function RegisteUserForm() {
+    const [state, formAction] = useFormState(registerUserAction, initialState);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -55,7 +48,6 @@ export default function AddLoginUserForm() {
                 Heslo
             </Label>
             <Input type="password" name="password" placeholder="" />
-            <LoginButton />
             <RegisterButton />
         </form>
     );
