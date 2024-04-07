@@ -2,7 +2,7 @@
 
 import { ZLoginFormObject, Credentials, LoginUserFormState } from "@/types/login";
 
-import { createClient } from "@supabase/supabase-js";
+import { User, createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
@@ -29,9 +29,14 @@ export async function loginUserAction(
 
     const loginFormData = data.data;
     const a = await supabaseLoginUser(data.data);
-    if (!a) {
+    if (a == null) {
         return {
             message: "Nepodařilo se přihlásit",
+        };
+    } else{
+        console.log(a);
+        return {
+            message: "Přihlášení proběhlo úspěšně",
         };
     }
 
@@ -39,17 +44,17 @@ export async function loginUserAction(
     // redirect("/admin");
 }
 
-export async function supabaseLoginUser(loginFormData: Credentials): Promise<boolean> {
-    const { user, session, error } = await supabase.auth.signInWithPassword({
+export async function supabaseLoginUser(loginFormData: Credentials): Promise<User | null> {
+    const { data, error } = await supabase.auth.signInWithPassword({
         email: loginFormData.email,
         password: loginFormData.password,
     });
 
     if (error !== null) {
         console.log(error);
-        return false;
+        return null;
     }
 
-    return true;
+    return data.user;
 
 }

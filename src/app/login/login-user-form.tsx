@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
-import { AddActorFormState } from "@/types/actor";
 import { Label } from "@/components/ui/label";
 import { addActorAction } from "@/server/actors";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import { loginUserAction } from "@/server/login";
+import Link from "next/link";
 
 const initialState: LoginUserFormState = {
     user: undefined,
@@ -24,16 +25,15 @@ function LoginButton() {
     );
 }
 function RegisterButton() {
-    const { pending } = useFormStatus();
     return (
-        <Button variant="outline" type="submit" disabled={pending}>
-            Registrovat se
-        </Button>
+        <Link href="/register">
+            <Button variant="outline" className="w-full">Registrovat se</Button>
+        </Link>
     );
 }
 
 export default function AddActorForm() {
-    const [state, formAction] = useFormState(addActorAction, initialState);
+    const [state, formAction] = useFormState(loginUserAction, initialState);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -46,11 +46,11 @@ export default function AddActorForm() {
     }, [state, toast]);
 
     return (
-        <form action={formAction} className="flex flex-col gap-2 p-4">
-            <Label htmlFor="name" className="text-md">
+        <form action={formAction} className="flex flex-col gap-2 p-4 w-2/6">
+            <Label htmlFor="email" className="text-md">
                 Uživatelské jméno
             </Label>
-            <Input type="text" name="name" placeholder="" />
+            <Input type="email" name="email" placeholder="" />
             <Label htmlFor="password" className="text-md">
                 Heslo
             </Label>
