@@ -2,6 +2,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 import MainPageEventList from "./event-list";
 import MainPageActorList from "./actor-list";
+import image from "@/public/main.jpg";
 
 export default function Page() {
     return (
@@ -9,7 +10,7 @@ export default function Page() {
             <AspectRatio ratio={4 / 1}>
                 <div className="h-full w-full bg-muted"/>
                 <Image
-                    src="/main.jpg"
+                    src={image}
                     layout="fill"
                     objectFit="cover"
                     alt="Theater"/>
