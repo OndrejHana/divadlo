@@ -63,6 +63,7 @@ export async function loginUserAction(
     );
 
     session.session = dbSession;
+    session.isLoggedIn = true;
 
     await session.save();
 

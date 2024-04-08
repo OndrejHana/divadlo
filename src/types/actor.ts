@@ -12,7 +12,6 @@ export const ZPerson = z.object({
     id: z.number().positive(),
     firstName: z.string(),
     lastName: z.string(),
-    address: ZAddress,
 });
 
 export const ZActor = z.object({
@@ -25,27 +24,13 @@ export const ZAddActorFormObject = z.object({
     description: ZActor.shape.description,
     firstName: ZActor.shape.person.shape.firstName,
     lastName: ZActor.shape.person.shape.lastName,
-    email: ZActor.shape.person.shape.email,
-    phone: ZActor.shape.person.shape.phone,
-    city: ZAddress.shape.city,
-    street: ZAddress.shape.street,
-    houseNumber: ZAddress.shape.houseNumber,
-    zipCode: ZAddress.shape.zipCode,
 });
 
 export const ZUpdateActorFormObject = z.object({
     id: ZActor.shape.id,
     description: ZActor.shape.description,
-    personId: ZPerson.shape.id,
     firstName: ZActor.shape.person.shape.firstName,
     lastName: ZActor.shape.person.shape.lastName,
-    email: ZActor.shape.person.shape.email,
-    phone: ZActor.shape.person.shape.phone,
-    addressId: ZAddress.shape.id,
-    city: ZAddress.shape.city,
-    street: ZAddress.shape.street,
-    houseNumber: ZAddress.shape.houseNumber,
-    zipCode: ZAddress.shape.zipCode,
 });
 
 export const ZDeleteActorFormObject = z.object({

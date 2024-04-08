@@ -1,7 +1,6 @@
 import {
     Actor,
     AddActorFormObject,
-    Address,
     UpdateActorFormObject,
 } from "@/types/actor";
 
@@ -15,8 +14,6 @@ export async function dbGetActors(): Promise<Actor[]> {
         id,
         description,
         person(id, first_name, last_name)`);
-
-    console.log(data)
 
     if (error !== null) {
         throw new Error(error.message);
@@ -47,9 +44,7 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
             `
             id, 
             description,
-            person(id, first_name, last_name, email, phone,
-                address(id, city, street, house_number, zip_code)
-            )
+            person(id, first_name, last_name)
         `,
         )
         .eq("id", id)
@@ -73,15 +68,6 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
             id: actor.person.id,
             firstName: actor.person.first_name,
             lastName: actor.person.last_name,
-            email: actor.person.email,
-            phone: actor.person.phone,
-            address: {
-                id: actor.person.address.id,
-                city: actor.person.address.city,
-                street: actor.person.address.street,
-                houseNumber: actor.person.address.house_number,
-                zipCode: actor.person.address.zip_code,
-            },
         },
     };
 
@@ -91,33 +77,12 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
 export async function dbAddActor(
     addActorData: AddActorFormObject,
 ): Promise<Actor> {
-    const { data: addressData, error: addressError } = await supabase
-        .from("address")
-        .insert([
-            {
-                city: addActorData.city,
-                street: addActorData.street,
-                house_number: addActorData.houseNumber,
-                zip_code: addActorData.zipCode,
-            },
-        ])
-        .select();
-
-    if (addressError !== null || addressData === null) {
-        throw new Error("Actor address not added");
-    }
-
-    const address = addressData[0];
-
     const { data: personData, error: personError } = await supabase
         .from("person")
         .insert([
             {
                 first_name: addActorData.firstName,
                 last_name: addActorData.lastName,
-                email: addActorData.email,
-                phone: addActorData.phone,
-                address_id: address.id,
             },
         ])
         .select();
@@ -151,15 +116,6 @@ export async function dbAddActor(
             id: person.id,
             firstName: person.first_name,
             lastName: person.last_name,
-            email: person.email,
-            phone: person.phone,
-            address: {
-                id: address.id,
-                city: address.city,
-                street: address.street,
-                houseNumber: address.house_number,
-                zipCode: address.zip_code,
-            },
         },
     };
 }
@@ -167,32 +123,13 @@ export async function dbAddActor(
 export async function dbUpdateActor(
     updateFormData: UpdateActorFormObject,
 ): Promise<Actor> {
-    const { data: addressData, error: addressError } = await supabase
-        .from("address")
-        .update({
-            city: updateFormData.city,
-            street: updateFormData.street,
-            house_number: updateFormData.houseNumber,
-            zip_code: updateFormData.zipCode,
-        })
-        .eq("id", updateFormData.addressId)
-        .select();
-
-    if (addressError !== null || addressData === null) {
-        throw new Error(addressError.message);
-    }
-
-    const address = addressData[0];
-
     const { data: personData, error: personError } = await supabase
         .from("person")
         .update({
             first_name: updateFormData.firstName,
             last_name: updateFormData.lastName,
-            email: updateFormData.email,
-            phone: updateFormData.phone,
         })
-        .eq("id", updateFormData.personId)
+        .eq("id", updateFormData.id)
         .select();
 
     if (personError !== null || personData === null) {
@@ -222,15 +159,6 @@ export async function dbUpdateActor(
             id: person.id,
             firstName: person.first_name,
             lastName: person.last_name,
-            email: person.email,
-            phone: person.phone,
-            address: {
-                id: address.id,
-                city: address.city,
-                street: address.street,
-                houseNumber: address.house_number,
-                zipCode: address.zip_code,
-            },
         },
     };
 }

@@ -3,13 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { AddEventFormState } from "@/types/event";
 import { useFormState, useFormStatus } from "react-dom";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { addEventAction } from "@/server/events";
 import { Label } from "@/components/ui/label";
 import { DateTimePicker } from "@/components/datetime-picker";
 import { useEffect, useState } from "react";
-import ErrorBanner from "@/components/error-banner";
 import { useToast } from "@/components/ui/use-toast";
 
 const initialState: AddEventFormState = {
@@ -57,7 +55,10 @@ export default function AddEventForm({
                     date: time,
                     hasTime: true,
                 }}
-                onChange={({ date }) => setTime(date)}
+                onChange={({ date }) => {
+                    console.log(date, date.toISOString());
+                    setTime(date);
+                }}
             />
             <SubmitButton />
         </form>

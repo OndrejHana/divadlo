@@ -24,8 +24,8 @@ export default async function MainPageActorList() {
             <h2 className="text-2xl font-bold ">Naši herci</h2>
             <div className="flex gap-4 overflow-x-auto">
                 {actors.map((actor) => (
-                    <Link href={`/actors/${actor.id}`} passHref>
-                        <Card key={actor.id} actor={actor} />
+                    <Link href={`/actors/${actor.id}`} key={actor.id} passHref>
+                        <Card actor={actor} />
                     </Link>
                 ))}
             </div>

@@ -58,65 +58,10 @@ export default function AddActorForm() {
                 type="text"
                 required
             />
-            <Label htmlFor="email" className="text-md">
-                Email herce
-            </Label>
-            <Input
-                type="email"
-                name="email"
-                placeholder="Email herce"
-                required
-            />
-            <Label htmlFor="phone" className="text-md">
-                Telefonní číslo herce
-            </Label>
-            <Input
-                type="tel"
-                name="phone"
-                placeholder="Telefonní číslo herce"
-                required
-            />
             <Label htmlFor="description" className="text-md">
                 Popis herce
             </Label>
             <Textarea name="description" placeholder="Popis herce" required />
-            <Label htmlFor="city" className="text-md">
-                Město bydliště herce
-            </Label>
-            <Input
-                type="text"
-                name="city"
-                placeholder="Město bydliště herce"
-                required
-            />
-            <Label htmlFor="street" className="text-md">
-                Ulice bydliště herce
-            </Label>
-            <Input
-                type="text"
-                name="street"
-                placeholder="Ulice bydliště herce"
-                required
-            />
-            <Label htmlFor="houseNumber" className="text-md">
-                Číslo popisné bydliště herce
-            </Label>
-            <Input
-                type="text"
-                name="houseNumber"
-                placeholder="Číslo popisné bydliště herce"
-                required
-            />
-            <Label htmlFor="zipCode" className="text-md">
-                PSČ bydliště herce
-            </Label>
-            <Input
-                type="text"
-                name="zipCode"
-                placeholder="PSČ bydliště herce"
-                required
-            />
-
             <SubmitButton />
         </form>
     );

@@ -25,6 +25,7 @@ export type RegisterUserFormObject = z.infer<typeof ZRegisterUserFormObject>;
 
 export type UserSessionData = {
     session: Session;
+    isLoggedIn: boolean;
 };
 
 export type AuthResponse = {

@@ -23,13 +23,7 @@ export async function addActorAction(
     const data = ZAddActorFormObject.safeParse({
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
         description: formData.get("description") as string,
-        city: formData.get("city") as string,
-        street: formData.get("street") as string,
-        houseNumber: parseInt(formData.get("houseNumber") as string),
-        zipCode: formData.get("zipCode") as string,
     });
 
     if (!data.success) {
@@ -60,16 +54,8 @@ export async function updateActorAction(
     const data = ZUpdateActorFormObject.safeParse({
         id: parseInt(formData.get("id") as string),
         description: formData.get("description") as string,
-        personId: parseInt(formData.get("personId") as string),
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        addressId: parseInt(formData.get("addressId") as string),
-        city: formData.get("city") as string,
-        street: formData.get("street") as string,
-        houseNumber: parseInt(formData.get("houseNumber") as string),
-        zipCode: formData.get("zipCode") as string,
     });
 
     if (!data.success) {
@@ -90,16 +76,8 @@ export async function updateActorAction(
             actor: {
                 id: actor.id,
                 description: actor.description,
-                personId: actor.person.id,
                 firstName: actor.person.firstName,
                 lastName: actor.person.lastName,
-                email: actor.person.email,
-                phone: actor.person.phone,
-                addressId: actor.person.address.id,
-                city: actor.person.address.city,
-                street: actor.person.address.street,
-                houseNumber: actor.person.address.houseNumber,
-                zipCode: actor.person.address.zipCode,
             },
             message: "Herec byl upraven",
         };
