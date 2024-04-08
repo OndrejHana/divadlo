@@ -24,11 +24,11 @@ values
   ('Rising star', 2);
 
 insert into
-  Visitor (id, email, phone, address_id)
+  Visitor (id, email, phone, address_id, user_id)
 values
-  (3, 'johndoe@example.com', '+420732777888', 1),
-  (4, 'janesmith@example.com', '+420732777888', 2),
-  (5, 'michal.jordan@seznam.com', null, 3);
+  (3, 'johndoe@example.com', '+420732777888', 1, '93e523aa-3ae5-4d22-b2e5-67e0ff99d372'),
+  (4, 'janesmith@example.com', '+420732777888', 2, 'd8b341de-0b1b-4527-ae98-6542f75d4ac5'),
+  (5, 'michal.jordan@seznam.com', null, 3, '3413d0a0-305a-4f94-b2c5-eb500d2082d0');
 
 insert into
   Play (

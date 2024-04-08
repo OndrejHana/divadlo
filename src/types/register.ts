@@ -1,11 +1,15 @@
 import { z } from "zod";
 
 export const ZCredentials = z.object({
+    firstname: z.string(),
+    lastname: z.string(),
     email: z.string(),
     password: z.string()
 });
 
 export const ZRegisterUserFormObject = z.object({
+    firstname: ZCredentials.shape.firstname,
+    lastname: ZCredentials.shape.lastname,
     email: ZCredentials.shape.email,
     password: ZCredentials.shape.password,
 });

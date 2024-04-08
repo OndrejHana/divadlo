@@ -32,7 +32,7 @@ export default function RegisteUserForm() {
     useEffect(() => {
         if (!!state.message) {
             toast({
-                title: "Přihlášení",
+                title: "Registrace uživatele",
                 description: state.message,
             });
         }
@@ -40,6 +40,14 @@ export default function RegisteUserForm() {
 
     return (
         <form action={formAction} className="flex flex-col gap-2 p-4 w-2/6">
+            <Label htmlFor="firstname" className="text-md">
+                Jméno
+            </Label>            
+            <Input type="text" name="firstname" placeholder="" />
+            <Label htmlFor="lastname" className="text-md">
+                Příjmení
+            </Label>
+            <Input type="text" name="lastname" placeholder="" />
             <Label htmlFor="email" className="text-md">
                 Email
             </Label>

@@ -15,6 +15,8 @@ export async function registerUserAction(
     formData: FormData, 
 ): Promise<RegisterUserFormState> {
     const data = ZRegisterUserFormObject.safeParse({
+        firstname: formData.get("firstname") as string,
+        lastname: formData.get("lastname") as string,
         email: formData.get("email") as string,
         password: formData.get("password") as string,
     });
@@ -26,15 +28,15 @@ export async function registerUserAction(
         };
     }
 
-    const loginFormData = data.data;
-    const a = await supabaseRegisterUser(data.data);
+    const registerFormData = data.data;
+    const a = await supabaseRegisterUser(registerFormData);
     if (a == null) {
         return {
             message: "Nepodařilo se přihlásit",
         };
     } else{
         console.log(a);
-        return {
+        return {    
             message: "Přihlášení proběhlo úspěšně",
         };
     }
@@ -49,11 +51,11 @@ export async function supabaseRegisterUser(loginFormData: RegisterCredentials): 
         password: loginFormData.password,
     });
 
-    if (error !== null) {
+    if (error !== null || data.user == null) {
         console.log(error);
         return null;
     }
-
+    
     return data.user;
 
 }

@@ -25,7 +25,8 @@ CREATE TABLE Visitor (
   id INT PRIMARY KEY REFERENCES Person(id),
   email VARCHAR(255) UNIQUE NOT NULL,
   phone VARCHAR(20),
-  address_id INT REFERENCES Address(id)
+  address_id INT REFERENCES Address(id),
+  user_id VARCHAR(255) UNIQUE NOT NULL;
 );
 
 -- Create Play table
