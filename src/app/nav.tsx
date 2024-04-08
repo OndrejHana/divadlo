@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Nav() {
     return (
-        <nav className="flex items-center gap-2 lg:gap-16 bg-primary p-4 text-primary-foreground">
+        <nav className="flex items-center gap-2 bg-primary p-4 text-primary-foreground lg:gap-16">
             <Link href="/" className="flex h-full items-center">
                 <h1 className="flex items-center gap-2 text-2xl font-bold">
                     <Theater className="w-6" />
@@ -29,7 +29,7 @@ export default function Nav() {
                 </Button>
             </div>
             <Link href="/login" className="flex h-full items-center">
-                <Button variant="primary">Přihlásit se</Button>
+                <Button variant="ghost">Přihlásit se</Button>
             </Link>
         </nav>
     );

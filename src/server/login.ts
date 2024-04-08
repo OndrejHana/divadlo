@@ -1,8 +1,14 @@
 "use server";
 
-import { ZLoginFormObject, Credentials, LoginUserFormState } from "@/types/login";
+import { AuthSessionOptions } from "@/lib/utils";
+import { ZLoginFormObject, LoginUserFormState } from "@/types/login";
+import { UserSessionData } from "@/types/register";
 
-import { User, createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import { getIronSession } from "iron-session";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
@@ -13,48 +19,68 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function loginUserAction(
     prevState: LoginUserFormState,
-    formData: FormData, 
+    formData: FormData,
 ): Promise<LoginUserFormState> {
-    const data = ZLoginFormObject.safeParse({
+    const loginObject = ZLoginFormObject.safeParse({
         email: formData.get("email") as string,
         password: formData.get("password") as string,
     });
 
-    if (!data.success) {
+    if (!loginObject.success) {
         return {
             ...prevState,
-            message: data.error.errors.map((e) => e.message).join(", "),
+            message: loginObject.error.errors.map((e) => e.message).join(", "),
         };
     }
 
-    const loginFormData = data.data;
-    const a = await supabaseLoginUser(data.data);
-    if (a == null) {
-        return {
-            message: "Nepodařilo se přihlásit",
-        };
-    } else{
-        console.log(a);
-        return {
-            message: "Přihlášení proběhlo úspěšně",
-        };
-    }
+    const loginFormData = loginObject.data;
 
-    // revalidatePath("/admin");
-    // redirect("/admin");
-}
-
-export async function supabaseLoginUser(loginFormData: Credentials): Promise<User | null> {
     const { data, error } = await supabase.auth.signInWithPassword({
         email: loginFormData.email,
         password: loginFormData.password,
     });
 
-    if (error !== null) {
+    if (error) {
         console.log(error);
-        return null;
+        return {
+            ...prevState,
+            message: "Nepodařilo se přihlásit",
+        };
     }
 
-    return data.user;
+    if (!data || !data.user || !data.session) {
+        return {
+            ...prevState,
+            message: "Nepodařilo se přihlásit",
+        };
+    }
 
+    const dbSession = data.session;
+
+    const session = await getIronSession<UserSessionData>(
+        cookies(),
+        AuthSessionOptions,
+    );
+
+    session.session = dbSession;
+
+    await session.save();
+
+    revalidatePath("/");
+    redirect("/");
 }
+
+// export async function supabaseLoginUser(loginFormData: Credentials): Promise<User | null> {
+//     const { data, error } = await supabase.auth.signInWithPassword({
+//         email: loginFormData.email,
+//         password: loginFormData.password,
+//     });
+//
+//     if (error !== null) {
+//         console.log(error);
+//         return null;
+//     }
+//
+//     return data.user;
+//
+// }

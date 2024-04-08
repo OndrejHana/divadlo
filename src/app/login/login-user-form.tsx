@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import { loginUserAction } from "@/server/login";
 import Link from "next/link";
+import { LoginUserFormState } from "@/types/login";
 
 const initialState: LoginUserFormState = {
     user: undefined,
