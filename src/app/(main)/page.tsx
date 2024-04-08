@@ -8,12 +8,13 @@ export default function Page() {
     return (
         <div className="flex h-full w-full flex-col">
             <AspectRatio ratio={4 / 1}>
-                <div className="h-full w-full bg-muted"/>
+                <div className="h-full w-full bg-muted" />
                 <Image
                     src={image}
                     layout="fill"
                     objectFit="cover"
-                    alt="Theater"/>
+                    alt="Theater"
+                />
             </AspectRatio>
             <MainPageEventList />
             <MainPageActorList />

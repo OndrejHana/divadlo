@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Nav from "./nav";
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "./footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,12 @@ export default function RootLayout({
             <body
                 className={cn(
                     inter.className,
-                    "flex min-h-screen w-screen flex-col disable-scroll-x",
+                    "disable-scroll-x flex min-h-screen w-screen flex-col bg-primary",
                 )}
             >
                 <Nav />
-                {children}
+                <main className="flex-grow bg-background">{children}</main>
+                <Footer />
                 <Toaster />
             </body>
         </html>
