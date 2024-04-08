@@ -24,7 +24,7 @@ export type RegisterCredentials = z.infer<typeof ZCredentials>;
 export type RegisterUserFormObject = z.infer<typeof ZRegisterUserFormObject>;
 
 export type UserSessionData = {
-    session: Session;
+    session: Session | null;
     isLoggedIn: boolean;
 };
 

@@ -89,3 +89,18 @@ export async function supabaseRegisterUser(
         session: data.session,
     };
 }
+
+export async function logoutUser(): Promise<void> {
+    const session = await getIronSession<UserSessionData>(
+        cookies(),
+        AuthSessionOptions,
+    );
+
+    session.session = null;
+    session.isLoggedIn = false;
+
+    await session.save();
+
+    revalidatePath("/");
+    redirect("/");
+}

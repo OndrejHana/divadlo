@@ -5,6 +5,7 @@ import { getIronSession } from "iron-session";
 import { Theater } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import LogoutButton from "./logout-button";
 
 export default async function Nav() {
     const session = await getIronSession<UserSessionData>(
@@ -38,9 +39,7 @@ export default async function Nav() {
                 </Button>
             </div>
             {session.isLoggedIn ? (
-                <Link href="/logout" className="flex h-full items-center">
-                    <Button variant="ghost">Odhlásit se</Button>
-                </Link>
+                <LogoutButton />
             ) : (
                 <Link href="/login" className="flex h-full items-center">
                     <Button variant="ghost">Přihlásit se</Button>
