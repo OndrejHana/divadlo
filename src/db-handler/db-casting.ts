@@ -21,15 +21,6 @@ function dataToCasting(data: any): Casting {
                 id: data.actor.person.id,
                 firstName: data.actor.person.first_name,
                 lastName: data.actor.person.last_name,
-                email: data.actor.person.email,
-                phone: data.actor.person.phone,
-                address: {
-                    id: data.actor.person.address.id,
-                    city: data.actor.person.address.city,
-                    street: data.actor.person.address.street,
-                    houseNumber: data.actor.person.address.house_number,
-                    zipCode: data.actor.person.address.zip_code,
-                },
             },
         },
         event: {
@@ -55,9 +46,7 @@ export async function dbGetCastings(): Promise<Casting[]> {
     const { data, error } = await supabase.from("casting").select(`
             id,
             actor(id, description, 
-                person(id, first_name, last_name, email, phone, 
-                    address(id, city, street, house_number, zip_code)
-                )   
+                person(id, first_name, last_name)   
             ),
             event(id, time, 
                 play(id, name, author, description, year_of_release),
@@ -82,9 +71,7 @@ export async function dbGetCastingsForActor(
             `
             character,
             actor(id, description, 
-                person(id, first_name, last_name, email, phone, 
-                    address(id, city, street, house_number, zip_code)
-                )   
+                person(id, first_name, last_name)   
             ),
             event(id, time, 
                 play(id, name, author, description, year_of_release),

@@ -1,8 +1,17 @@
 import { Button } from "@/components/ui/button";
+import { AuthSessionOptions } from "@/lib/utils";
+import { UserSessionData } from "@/types/register";
+import { getIronSession } from "iron-session";
 import { Theater } from "lucide-react";
+import { cookies } from "next/headers";
 import Link from "next/link";
 
-export default function Nav() {
+export default async function Nav() {
+    const session = await getIronSession<UserSessionData>(
+        cookies(),
+        AuthSessionOptions,
+    );
+
     return (
         <nav className="flex items-center gap-2 bg-primary p-4 text-primary-foreground lg:gap-16">
             <Link href="/" className="flex h-full items-center">
@@ -16,21 +25,27 @@ export default function Nav() {
                     <Link href="/">Úvod</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                    <Link href="/program">Program</Link>
+                    <Link href="/">Program</Link>
                 </Button>
                 <Button asChild variant="ghost">
                     <Link href="/">Repertoár</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                    <Link href="/actors">Herci</Link>
+                    <Link href="/">Herci</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                    <Link href="/about">O Divadle</Link>
+                    <Link href="/">O Divadle</Link>
                 </Button>
             </div>
-            <Link href="/login" className="flex h-full items-center">
-                <Button variant="ghost">Přihlásit se</Button>
-            </Link>
+            {session.isLoggedIn ? (
+                <Link href="/logout" className="flex h-full items-center">
+                    <Button variant="ghost">Odhlásit se</Button>
+                </Link>
+            ) : (
+                <Link href="/login" className="flex h-full items-center">
+                    <Button variant="ghost">Přihlásit se</Button>
+                </Link>
+            )}
         </nav>
     );
 }

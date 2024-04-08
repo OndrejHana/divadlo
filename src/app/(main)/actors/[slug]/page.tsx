@@ -30,7 +30,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <h2 className="text-2xl font-bold text-primary-foreground">
                     V čem právě hraje
                 </h2>
-                <div className="flex w-full">
+            <div className="flex gap-8 overflow-x-auto">
                     {actorsCastings.map((casting) => (
                         <EventCard
                             key={casting.event.id}

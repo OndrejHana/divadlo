@@ -59,6 +59,7 @@ export async function registerUserAction(
     );
 
     session.session = authResponse?.session;
+    session.isLoggedIn = true;
 
     await session.save();
 

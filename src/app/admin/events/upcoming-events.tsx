@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { dbGetEvents } from "@/db-handler/db-events";
 import Link from "next/link";
-import dayjs from "dayjs";
+import { format } from "date-fns";
 
 export default async function UpcomingEvents() {
     const events = await dbGetEvents();
@@ -30,9 +30,7 @@ export default async function UpcomingEvents() {
                             <div className="font-bold">{event.play.name}</div>
                             <div className="flex gap-2">
                                 <div className="text-muted-foreground">
-                                    {dayjs(event.time.toLocaleString()).format(
-                                        "D. M. YYYY HH:mm",
-                                    )}
+                                    {format(event.time, "dd.MM.yyyy hh:mm")}
                                 </div>
                                 <div>{event.hall.name}</div>
                             </div>

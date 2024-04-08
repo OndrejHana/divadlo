@@ -34,6 +34,8 @@ export async function addEventAction(
     }
 
     const parsedEvent = data.data;
+    console.log(parsedEvent.time, parsedEvent.time.toISOString(), parsedEvent.time.toLocaleString());
+
     try {
         await dbAddEvent(parsedEvent);
         revalidatePath("/admin/events");
