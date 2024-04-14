@@ -61,3 +61,7 @@
 .disable-scroll-x {
     overflow-x: hidden;
 }
+
+.custom-grid-rows {
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+}
