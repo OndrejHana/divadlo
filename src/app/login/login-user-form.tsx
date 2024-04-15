@@ -21,7 +21,7 @@ function LoginButton() {
 
     return (
         <Button variant="default" type="submit" disabled={pending}>
-            Přihlásti se
+            Přihlásit se
         </Button>
     );
 }
