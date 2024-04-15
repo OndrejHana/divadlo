@@ -53,6 +53,9 @@ export async function registerUserAction(
         };
     }
 
+    // TODO:  change user role to divadlo_visitor
+    
+
     const session = await getIronSession<UserSessionData>(
         cookies(),
         AuthSessionOptions,
