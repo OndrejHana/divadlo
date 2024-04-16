@@ -46,15 +46,49 @@ export async function registerUserAction(
     const registerFormData = registerFormObject.data;
     const authResponse = await supabaseRegisterUser(registerFormData);
 
-    if (!authResponse) {
+    if(!authResponse) { 
         return {
             ...prevState,
-            message: "Nepodařilo se přihlásit",
+            message: "Nepodařilo se zaregistrovat",
         };
     }
 
-    // TODO:  change user role to divadlo_visitor
-    
+    // insert into person table
+    const { data, error } = await supabase
+        .from("person")
+        .insert([
+            {
+                first_name: registerFormData.firstname,
+                last_name: registerFormData.lastname,
+            },
+        ])
+        .select("id");
+    if (error) {
+        console.log(error);
+        return {
+            ...prevState,
+            message: "Nepodařilo se zaregistrovat",
+        };
+    }
+
+    const personId = data[0].id;
+    if (!personId) {
+        return {
+            ...prevState,
+            message: "Nepodařilo se zaregistrovat",
+        };
+    }
+
+    // insert into visitor table
+    const { data: visitorData, error: visitorError } = await supabase
+        .from("visitor")
+        .insert([
+            {
+                email: registerFormData.email,
+                id: personId,
+                user_id: authResponse.user.id
+            },
+        ]);
 
     const session = await getIronSession<UserSessionData>(
         cookies(),
@@ -86,6 +120,7 @@ export async function supabaseRegisterUser(
     if (!data || !data.user || !data.session) {
         return null;
     }
+
 
     return {
         user: data.user,
