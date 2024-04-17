@@ -71,3 +71,5 @@ CREATE TABLE Ticket (
   seat INT NOT NULL,
   price INT NOT NULL
 );
+
+CREATE UNIQUE INDEX play_name_idx ON play (name);
