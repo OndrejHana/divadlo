@@ -99,7 +99,7 @@ export async function deleteHallAction(
 
         revalidatePath("/admin/halls");
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return {
             hall: prevState.hall,
             message:

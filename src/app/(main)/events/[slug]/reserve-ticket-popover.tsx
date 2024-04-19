@@ -1,13 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { AuthSessionOptions } from "@/lib/utils";
-import { UserSessionData } from "@/types/register";
 import { Ticket } from "@/types/ticket";
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ReserveTicketForm from "./reserve-ticket-form";
+import { getCookie } from "@/lib/cookies";
 
 function FormSkeleton() {
     return <Skeleton />;
@@ -18,12 +15,9 @@ export default async function ReserveTicketPopover({
 }: {
     ticket: Ticket;
 }) {
-    const session = await getIronSession<UserSessionData>(
-        cookies(),
-        AuthSessionOptions,
-    );
+    const session = await getCookie();
 
-    if (!session || !session.session?.user) {
+    if (!session || !session.visitor) {
         return (
             <div className="flex h-full w-full flex-col gap-4">
                 <p>Pro rezervaci lístků se přihlaste</p>
@@ -35,7 +29,7 @@ export default async function ReserveTicketPopover({
     }
     return (
         <Suspense fallback={<FormSkeleton />}>
-            <ReserveTicketForm ticket={ticket} user={session.session.user} />
+            <ReserveTicketForm ticket={ticket} visitor={session.visitor} />
         </Suspense>
     );
 }

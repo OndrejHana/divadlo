@@ -56,7 +56,6 @@ export default function AddEventForm({
                     hasTime: true,
                 }}
                 onChange={({ date }) => {
-                    console.log(date, date.toISOString());
                     setTime(date);
                 }}
             />

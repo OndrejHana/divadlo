@@ -15,8 +15,20 @@ export async function dbGetTicketsByEventId(
 ): Promise<Ticket[]> {
     const { data, error } = await supabase
         .from("ticket")
-        .select("*")
-        .eq("event_id", eventId);
+        .select(
+            `id,
+            event(
+                id,
+                time,
+                play(id, name, author, description, year_of_release),
+                hall(id, name, number_of_seats)
+            ),
+            visitor(id, email, phone, user_id, role, address_id),
+            seat,
+            price`,
+        )
+        .eq("event_id", eventId)
+        .order("seat", { ascending: true });
 
     if (data === undefined) {
         throw new Error("Error getting tickets");
@@ -63,7 +75,6 @@ export async function dbGetTicket(id: number): Promise<Ticket | undefined> {
 }
 
 export async function dbReserveTicker(data: ReserveTicket): Promise<void> {
-    console.log(data);
     await supabase
         .from("ticket")
         .update({

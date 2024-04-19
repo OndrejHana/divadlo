@@ -6,6 +6,7 @@ import {
     ReserveTicket,
     ZReserveTicket,
 } from "@/types/ticket";
+import { revalidatePath } from "next/cache";
 
 export async function reserveTicketAction(
     prevState: ReserveTickerFormState,
@@ -13,7 +14,7 @@ export async function reserveTicketAction(
 ): Promise<ReserveTickerFormState> {
     const formdata = ZReserveTicket.safeParse({
         ticket_id: parseInt(formData.get("ticket_id") as string),
-        visitor_id: formData.get("visitor_id") as string,
+        visitor_id: parseInt(formData.get("visitor_id") as string),
     });
 
     if (!formdata.success) {
@@ -25,16 +26,16 @@ export async function reserveTicketAction(
     }
 
     const reserveTicket = formdata.data as ReserveTicket;
-    console.log(reserveTicket);
 
     try {
         await dbReserveTicker(reserveTicket);
+        revalidatePath(`/admin/halls/${reserveTicket.ticket_id}`);
+
         return {
             data: reserveTicket,
             message: "Rezervace proběhla úspěšně",
         };
     } catch (e) {
-        console.log("rip bozo", e);
         return {
             data: reserveTicket,
             message: "Rezervace selhala",

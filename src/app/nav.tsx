@@ -1,17 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { AuthSessionOptions } from "@/lib/utils";
-import { UserSessionData } from "@/types/register";
-import { getIronSession } from "iron-session";
 import { Theater } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
+import { getCookie } from "@/lib/cookies";
 import LogoutButton from "./logout-button";
 
 export default async function Nav() {
-    const session = await getIronSession<UserSessionData>(
-        cookies(),
-        AuthSessionOptions,
-    );
+    const session = await getCookie();
 
     return (
         <nav className="top-0 z-50 flex w-full gap-2 bg-primary/40 p-4 text-primary-foreground drop-shadow-lg backdrop-blur-md lg:sticky lg:gap-16">
@@ -38,8 +32,16 @@ export default async function Nav() {
                     <Link href="/">O Divadle</Link>
                 </Button>
             </div>
-            {session.isLoggedIn ? (
-                <LogoutButton />
+            {session.isLoggedIn && session.session && <LogoutButton />}
+            {session.isLoggedIn && session.session ? (
+                <Link href={`/user/${session.session.user.id}`}>
+                    <Button
+                        variant="ghost"
+                        className="flex h-full items-center"
+                    >
+                        Můj účet
+                    </Button>
+                </Link>
             ) : (
                 <Link href="/login" className="flex h-full items-center">
                     <Button variant="ghost">Přihlásit se</Button>

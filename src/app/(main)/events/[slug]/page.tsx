@@ -12,11 +12,16 @@ import Image from "next/image";
 import ReserveTicketPopover from "./reserve-ticket-popover";
 
 function Seat({ ticket }: { ticket: Ticket }) {
+    if (ticket.visitor) {
+        return (
+            <div className="h-full w-full cursor-pointer rounded-sm bg-primary p-1 text-center text-primary-foreground">
+                {ticket.seat}
+            </div>
+        );
+    }
     return (
         <Popover>
-            <PopoverTrigger
-                className={`h-full w-full cursor-pointer rounded-sm p-1 ${!!ticket.visitor ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:gray-300"}`}
-            >
+            <PopoverTrigger className="h-full w-full cursor-pointer rounded-sm bg-muted p-1 text-muted-foreground hover:bg-gray-300">
                 <p>{ticket.seat}</p>
             </PopoverTrigger>
             <PopoverContent className="flex w-fit flex-col gap-4">
@@ -33,7 +38,7 @@ function SeatView({ tickets }: { tickets: Ticket[] }) {
             <div className="flex h-full w-full justify-center py-8">
                 <div className="custom-grid-rows grid max-w-4xl gap-1">
                     {tickets.map((ticket) => (
-                        <Seat ticket={ticket} />
+                        <Seat ticket={ticket} key={ticket.id} />
                     ))}
                 </div>
             </div>

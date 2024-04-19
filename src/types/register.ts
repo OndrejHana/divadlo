@@ -1,5 +1,6 @@
 import { Session, User } from "@supabase/supabase-js";
 import { z } from "zod";
+import { Visitor } from "./visitor";
 
 export const ZCredentials = z.object({
     firstname: z.string(),
@@ -23,12 +24,8 @@ export type RegisterUserFormState = {
 export type RegisterCredentials = z.infer<typeof ZCredentials>;
 export type RegisterUserFormObject = z.infer<typeof ZRegisterUserFormObject>;
 
-export type UserSessionData = {
-    session: Session | null;
-    isLoggedIn: boolean;
-};
-
 export type AuthResponse = {
     user: User;
+    visitor: Visitor;
     session: Session;
 };

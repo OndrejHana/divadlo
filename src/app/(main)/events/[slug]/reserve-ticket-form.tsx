@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { reserveTicketAction } from "@/server/tickets";
 import { ReserveTickerFormState, Ticket } from "@/types/ticket";
-import { User } from "@supabase/supabase-js";
+import { Visitor } from "@/types/visitor";
 import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -26,14 +26,14 @@ function SubmitButton() {
 
 export default function ReserveTicketForm({
     ticket,
-    user,
+    visitor,
 }: {
     ticket: Ticket;
-    user: User;
+    visitor: Visitor;
 }) {
     const initialState: ReserveTickerFormState = {
         data: {
-            visitor_id: user.id,
+            visitor_id: visitor.id,
             ticket_id: ticket.id,
         },
         message: "",
@@ -54,7 +54,7 @@ export default function ReserveTicketForm({
     return (
         <form action={action}>
             <Input type="hidden" name="ticket_id" value={ticket.id} />
-            <Input type="hidden" name="visitor_id" value={user.id} />
+            <Input type="hidden" name="visitor_id" value={visitor.id} />
             <SubmitButton />
         </form>
     );

@@ -37,7 +37,7 @@ export async function addActorAction(
     try {
         await dbAddActor(actorFormData);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return {
             message: "Nepodařilo se přidat herce",
         };
@@ -82,7 +82,7 @@ export async function updateActorAction(
             message: "Herec byl upraven",
         };
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return {
             message: "Nepodařilo se upravit herce",
         };
@@ -108,7 +108,7 @@ export async function deleteActorAction(
         await dbDeleteActor(actorFormData.id);
         revalidatePath("/admin/actors");
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return {
             message: "Nepodařilo se smazat herce, na herce se odkazuje",
         };

@@ -1,13 +1,16 @@
 "use server";
 
-import { AuthSessionOptions } from "@/lib/utils";
-import { ZLoginFormObject, LoginUserFormState } from "@/types/login";
-import { UserSessionData } from "@/types/register";
+import { getCookie } from "@/lib/cookies";
+import {
+    ZLoginFormObject,
+    LoginUserFormState,
+    LoginFormObject,
+} from "@/types/login";
+import { AuthResponse } from "@/types/register";
+import { Visitor } from "@/types/visitor";
 
 import { createClient } from "@supabase/supabase-js";
-import { getIronSession } from "iron-session";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -34,35 +37,11 @@ export async function loginUserAction(
     }
 
     const loginFormData = loginObject.data;
+    const authResponse = await supabaseLoginUser(loginFormData);
+    const session = await getCookie();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginFormData.email,
-        password: loginFormData.password,
-    });
-
-    if (error) {
-        console.log(error);
-        return {
-            ...prevState,
-            message: "Nepodařilo se přihlásit",
-        };
-    }
-
-    if (!data || !data.user || !data.session) {
-        return {
-            ...prevState,
-            message: "Nepodařilo se přihlásit",
-        };
-    }
-
-    const dbSession = data.session;
-
-    const session = await getIronSession<UserSessionData>(
-        cookies(),
-        AuthSessionOptions,
-    );
-
-    session.session = dbSession;
+    session.visitor = authResponse?.visitor ?? null;
+    session.session = authResponse?.session ?? null;
     session.isLoggedIn = true;
 
     await session.save();
@@ -71,17 +50,44 @@ export async function loginUserAction(
     redirect("/");
 }
 
-// export async function supabaseLoginUser(loginFormData: Credentials): Promise<User | null> {
-//     const { data, error } = await supabase.auth.signInWithPassword({
-//         email: loginFormData.email,
-//         password: loginFormData.password,
-//     });
-//
-//     if (error !== null) {
-//         console.log(error);
-//         return null;
-//     }
-//
-//     return data.user;
-//
-// }
+async function supabaseLoginUser(
+    loginObject: LoginFormObject,
+): Promise<AuthResponse | null> {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginObject.email,
+        password: loginObject.password,
+    });
+
+    if (error !== null) {
+        console.error(error);
+        return null;
+    }
+
+    if (!data || !data.user || !data.session) {
+        return null;
+    }
+
+    const user = data.user;
+
+    const { data: visitorData, error: visitorError } = await supabase
+        .from("visitor")
+        .select()
+        .eq("user_id", user.id);
+
+    if (visitorError !== null) {
+        console.error(visitorError);
+        return null;
+    }
+
+    if (!visitorData) {
+        return null;
+    }
+
+    const visitor: Visitor = visitorData[0];
+
+    return {
+        session: data.session,
+        visitor: visitor,
+        user: user,
+    };
+}

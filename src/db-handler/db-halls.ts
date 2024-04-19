@@ -98,7 +98,7 @@ export async function dbUpdateHall(
 export async function dbDeleteHall(id: number): Promise<void> {
     const { data, error } = await supabase.from("hall").delete().eq("id", id);
     if (error) {
-        console.log(error);
+        console.error(error);
         throw new Error("Hall not deleted");
     }
 }

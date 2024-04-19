@@ -4,15 +4,13 @@ import {
     AuthResponse,
     RegisterCredentials,
     RegisterUserFormState,
-    UserSessionData,
     ZRegisterUserFormObject,
 } from "@/types/register";
-import { getIronSession } from "iron-session";
 import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
-import { AuthSessionOptions } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getCookie } from "@/lib/cookies";
+import { Visitor } from "@/types/visitor";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
@@ -46,56 +44,17 @@ export async function registerUserAction(
     const registerFormData = registerFormObject.data;
     const authResponse = await supabaseRegisterUser(registerFormData);
 
-    if(!authResponse) { 
+    if (!authResponse) {
         return {
             ...prevState,
             message: "Nepodařilo se zaregistrovat",
         };
     }
 
-    // insert into person table
-    const { data, error } = await supabase
-        .from("person")
-        .insert([
-            {
-                first_name: registerFormData.firstname,
-                last_name: registerFormData.lastname,
-            },
-        ])
-        .select("id");
-    if (error) {
-        console.log(error);
-        return {
-            ...prevState,
-            message: "Nepodařilo se zaregistrovat",
-        };
-    }
-
-    const personId = data[0].id;
-    if (!personId) {
-        return {
-            ...prevState,
-            message: "Nepodařilo se zaregistrovat",
-        };
-    }
-
-    // insert into visitor table
-    const { data: visitorData, error: visitorError } = await supabase
-        .from("visitor")
-        .insert([
-            {
-                email: registerFormData.email,
-                id: personId,
-                user_id: authResponse.user.id
-            },
-        ]);
-
-    const session = await getIronSession<UserSessionData>(
-        cookies(),
-        AuthSessionOptions,
-    );
+    const session = await getCookie();
 
     session.session = authResponse?.session;
+    session.visitor = authResponse?.visitor;
     session.isLoggedIn = true;
 
     await session.save();
@@ -107,34 +66,59 @@ export async function registerUserAction(
 export async function supabaseRegisterUser(
     loginFormData: RegisterCredentials,
 ): Promise<AuthResponse | null> {
-    const { data, error } = await supabase.auth.signUp({
+    const { data: userData, error: userError } = await supabase.auth.signUp({
         email: loginFormData.email,
         password: loginFormData.password,
     });
 
-    if (error !== null) {
-        console.log(error);
+    if (userError !== null) {
+        console.error(userError);
         return null;
     }
 
-    if (!data || !data.user || !data.session) {
+    if (!userData || !userData.user || !userData.session) {
         return null;
     }
 
+    const { data: visitorData, error: visitorError } = await supabase
+        .from("visitor")
+        .insert({
+            email: loginFormData.email,
+            user_id: userData.user.id,
+            role: "Visitor",
+        })
+        .select();
+
+    if (visitorError !== null) {
+        console.error(visitorError);
+        return null;
+    }
+
+    if (!visitorData) {
+        return null;
+    }
+
+    const visitor: Visitor = {
+        id: visitorData[0].id,
+        email: visitorData[0].email,
+        phone: visitorData[0].phone,
+        user_id: visitorData[0].user_id,
+        role: visitorData[0].role,
+        address: visitorData[0].address,
+    };
 
     return {
-        user: data.user,
-        session: data.session,
+        user: userData.user,
+        visitor,
+        session: userData.session,
     };
 }
 
 export async function logoutUser(): Promise<void> {
-    const session = await getIronSession<UserSessionData>(
-        cookies(),
-        AuthSessionOptions,
-    );
+    const session = await getCookie();
 
     session.session = null;
+    session.visitor = null;
     session.isLoggedIn = false;
 
     await session.save();

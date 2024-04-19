@@ -12,7 +12,7 @@ export const ZTicket = z.object({
 
 export const ZReserveTicket = z.object({
     ticket_id: z.number().positive(),
-    visitor_id: z.string(),
+    visitor_id: z.number().positive(),
 });
 
 export type Ticket = z.infer<typeof ZTicket>;
