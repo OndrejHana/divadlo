@@ -73,3 +73,13 @@ CREATE TABLE Ticket (
 );
 
 CREATE UNIQUE INDEX play_name_idx ON play (name);
+
+CREATE VIEW previous_events AS
+SELECT *
+FROM event
+WHERE event.time < NOW();
+
+CREATE VIEW future_events AS
+SELECT *
+FROM event
+WHERE event.time > NOW();
