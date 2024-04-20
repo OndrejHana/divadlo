@@ -83,3 +83,15 @@ CREATE VIEW future_events AS
 SELECT *
 FROM event
 WHERE event.time > NOW();
+
+
+CREATE OR REPLACE FUNCTION get_play_performance_count(play INT)
+RETURNS int
+AS $$
+BEGIN 
+  RETURN (SELECT COUNT(*)
+  FROM event
+  WHERE play_id = $1
+  AND time >= NOW());
+  END;
+$$ LANGUAGE plpgsql;
