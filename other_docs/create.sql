@@ -86,12 +86,11 @@ WHERE event.time > NOW();
 
 
 CREATE OR REPLACE FUNCTION get_play_performance_count(play INT)
-RETURNS int
-AS $$
-BEGIN 
-  RETURN (SELECT COUNT(*)
-  FROM event
-  WHERE play_id = $1
-  AND time >= NOW());
-  END;
+  RETURNS int
+  AS $$
+  BEGIN 
+    RETURN (SELECT COUNT(*)
+    FROM previous_events
+    WHERE play_id = $1);
+    END;
 $$ LANGUAGE plpgsql;
