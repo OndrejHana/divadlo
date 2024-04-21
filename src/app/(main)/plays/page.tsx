@@ -2,10 +2,14 @@ import { dbGetPlays } from "@/db-handler/db-plays";
 import { Play } from "@/types/play";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
+import Link from "next/link";
 
 function PlayCard({ play }: { play: Play }) {
     return (
-        <div className="w-full border-y border-primary bg-muted">
+        <Link
+            className="w-full border-y border-primary bg-muted"
+            href={`/plays/${play.id}`}
+        >
             <div className="flex w-full flex-col gap-4 p-4">
                 <div>
                     <h2 className="text-2xl font-bold text-primary">
@@ -15,7 +19,7 @@ function PlayCard({ play }: { play: Play }) {
                 </div>
                 <p>{play.description}</p>
             </div>
-        </div>
+        </Link>
     );
 }
 
