@@ -55,7 +55,7 @@ export async function addActorAction(
             `actor-${actorFormData.firstName}-${actorFormData.lastName}`,
             actorFormData.actorImage,
         );
-        await dbAddActor(session.session, {
+        await dbAddActor(session.session,{
             firstName: actorFormData.firstName,
             lastName: actorFormData.lastName,
             description: actorFormData.description,
@@ -125,7 +125,7 @@ export async function updateActorAction(
 }
 
 export async function deleteActorAction(
-    prevState: DeleteActorFormState,
+    _prevState: DeleteActorFormState,
     formData: FormData,
 ): Promise<DeleteActorFormState> {
     const session = await getCookie();

@@ -1,6 +1,7 @@
 import { dbGetActor } from "@/db-handler/db-actors";
 import { dbGetCastingsForActor } from "@/db-handler/db-casting";
 import { EventCard } from "../../event-list";
+import Image from "next/image";
 
 export default async function Page({ params }: { params: { slug: string } }) {
     const actor = await dbGetActor(parseInt(params.slug));
@@ -18,7 +19,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
     return (
         <div className="flex h-full w-full flex-col">
             <div className="flex w-full">
-                <div className="h-96 w-80 bg-muted"></div>
+                <div className="h-96 w-80 bg-muted relative">
+                    {actor.actorImage && (
+                        <Image
+                            src={actor.actorImage}
+                            layout="fill"
+                            objectFit="cover"
+                            className="w-full h-full"
+                            alt="image"
+                        />
+                    )}
+                </div>
                 <div className="flex flex-col gap-4 p-4">
                     <h1 className="text-4xl font-bold text-primary">
                         {actor.person.firstName} {actor.person.lastName}
@@ -30,7 +41,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <h2 className="text-2xl font-bold text-primary-foreground">
                     V čem právě hraje
                 </h2>
-            <div className="flex gap-8 overflow-x-auto">
+                <div className="flex gap-8 overflow-x-auto">
                     {actorsCastings.map((casting) => (
                         <EventCard
                             key={casting.event.id}
