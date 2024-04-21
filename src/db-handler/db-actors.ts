@@ -1,9 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import {
-    Actor,
-    DbAddActorObject,
-    UpdateActorFormObject,
-} from "@/types/actor";
+import { Actor, DbAddActorObject, UpdateActorFormObject } from "@/types/actor";
 import { Session } from "@supabase/supabase-js";
 
 export async function dbGetActors(): Promise<Actor[]> {
@@ -138,8 +134,22 @@ export async function dbAddActor(
 }
 
 export async function dbUpdateActor(
+    session: Session,
     updateFormData: UpdateActorFormObject,
 ): Promise<Actor> {
+    const { data: user, error: userError } = await supabase.auth.setSession({
+        refresh_token: session.refresh_token,
+        access_token: session.access_token,
+    });
+
+    if (userError !== null) {
+        throw new Error(userError.message);
+    }
+
+    if (user === null || user.user === null || user.session === null) {
+        throw new Error("User not found");
+    }
+
     const { data: personData, error: personError } = await supabase
         .from("person")
         .update({
@@ -159,6 +169,7 @@ export async function dbUpdateActor(
         .from("actor")
         .update({
             description: updateFormData.description,
+            actorImage: updateFormData.actorImage,
         })
         .eq("id", updateFormData.id)
         .select();
@@ -172,6 +183,7 @@ export async function dbUpdateActor(
     return {
         id: actor.id,
         description: actor.description,
+        actorImage: actor.actorImage,
         person: {
             id: person.id,
             firstName: person.first_name,
@@ -180,7 +192,23 @@ export async function dbUpdateActor(
     };
 }
 
-export async function dbDeleteActor(id: number): Promise<void> {
+export async function dbDeleteActor(
+    session: Session,
+    id: number,
+): Promise<void> {
+    const { data: user, error: userError } = await supabase.auth.setSession({
+        refresh_token: session.refresh_token,
+        access_token: session.access_token,
+    });
+
+    if (userError !== null) {
+        throw new Error(userError.message);
+    }
+
+    if (user === null || user.user === null || user.session === null) {
+        throw new Error("User not found");
+    }
+
     const { data, error } = await supabase
         .from("actor")
         .delete()
