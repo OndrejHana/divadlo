@@ -4,7 +4,9 @@ import {
     dbAddActor,
     dbDeleteActor,
     dbUpdateActor,
+    uploadActorImage,
 } from "@/db-handler/db-actors";
+import { getCookie } from "@/lib/cookies";
 import {
     AddActorFormState,
     DeleteActorFormState,
@@ -20,10 +22,24 @@ export async function addActorAction(
     prevState: AddActorFormState,
     formData: FormData,
 ): Promise<AddActorFormState> {
+    const session = await getCookie();
+
+    if (
+        !session.session ||
+        !session.isLoggedIn ||
+        !session.visitor ||
+        session.visitor.role !== "Admin"
+    ) {
+        return {
+            message: "Nemáte oprávnění přidat herce",
+        };
+    }
+
     const data = ZAddActorFormObject.safeParse({
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
         description: formData.get("description") as string,
+        actorImage: formData.get("actorImage") as File,
     });
 
     if (!data.success) {
@@ -34,8 +50,18 @@ export async function addActorAction(
     }
 
     const actorFormData = data.data;
+
     try {
-        await dbAddActor(actorFormData);
+        const imageUrl = await uploadActorImage(
+            actorFormData.actorImage.name,
+            actorFormData.actorImage,
+        );
+        await dbAddActor(session.session, {
+            firstName: actorFormData.firstName,
+            lastName: actorFormData.lastName,
+            description: actorFormData.description,
+            actorImage: imageUrl,
+        });
     } catch (error) {
         console.error(error);
         return {

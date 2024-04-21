@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { addActorAction } from "@/server/actors";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const initialState: AddActorFormState = {
     actor: undefined,
@@ -27,6 +28,7 @@ function SubmitButton() {
 
 export default function AddActorForm() {
     const [state, formAction] = useFormState(addActorAction, initialState);
+    const [actorImage, setActorImage] = useState<File>();
     const { toast } = useToast();
 
     useEffect(() => {
@@ -62,6 +64,16 @@ export default function AddActorForm() {
                 Popis herce
             </Label>
             <Textarea name="description" placeholder="Popis herce" required />
+            <Label htmlFor="actorImage" className="text-md">Portrét herce</Label>
+            <Input
+                type="file"
+                name="actorImage"
+                onChange={(e) => {
+                    if (!e.target.files) return;
+                    const file = e.target.files[0];
+                    setActorImage(file);
+                }}
+            />
             <SubmitButton />
         </form>
     );

@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addActorAction } from "@/server/actors";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
-import { loginUserAction } from "@/server/login";
 import Link from "next/link";
 import { LoginUserFormState } from "@/types/login";
+import { loginUserAction } from "@/server/auth";
 
 const initialState: LoginUserFormState = {
     user: undefined,

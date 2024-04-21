@@ -11,6 +11,7 @@ import DeleteActorForm from "./delete-actor-form";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -29,6 +30,7 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
             description: actor.description,
             firstName: actor.person.firstName,
             lastName: actor.person.lastName,
+            actorImage: actor.actorImage,
         },
         message: "",
     };
@@ -49,6 +51,7 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
     const [firstName, setFirstName] = useState(actor.person.firstName);
     const [lastName, setLastName] = useState(actor.person.lastName);
     const [description, setDescription] = useState(actor.description);
+    const [actorImage, setActorImage] = useState(actor.actorImage);
 
     if (!state.actor) {
         return null;
@@ -89,6 +92,17 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
+                <Label htmlFor="actorImage">Portrét herce</Label>
+                {actorImage ? (
+                    <Image
+                        src={actorImage}
+                        alt="portrét herce"
+                        width={240}
+                        height={240}
+                    />
+                ) : (
+                    <p className="text-sm">Portrét herce není k dispozici</p>
+                )}
                 <SubmitButton />
             </form>
         </Card>
