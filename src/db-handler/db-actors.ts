@@ -223,26 +223,12 @@ export async function dbDeleteActor(
     const { data: personData, error: personError } = await supabase
         .from("person")
         .delete()
-        .eq("id", actor.person_id)
+        .eq("id", actor.id)
         .select();
 
     if (personError !== null || personData === null) {
         throw new Error(personError.message);
     }
-
-    const person = personData[0];
-
-    const { data: addressData, error: addressError } = await supabase
-        .from("address")
-        .delete()
-        .eq("id", person.address_id)
-        .select();
-
-    if (addressError !== null || addressData === null) {
-        throw new Error(addressError.message);
-    }
-
-    return;
 }
 
 export async function uploadActorImage(
