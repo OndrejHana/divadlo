@@ -55,7 +55,9 @@ async function PlayList() {
             <tbody>
                 {events.map((event) => (
                     <tr className="border-solid border" key={event.id}>
-                        <td className="p-2">{event.play.name}</td>
+                        <td className="p-2">
+                             <Link href={`/plays/${event.play.id}`}>{event.play.name}</Link>
+                        </td>
                         <td className="p-2">{event.time.toLocaleString()}</td>
                         <td className="p-2">{event.hall.name}</td>
                         <td className="flex p-2 justify-center items-center"><Link className="items-center bg-red-950 rounded p-1 text-white" href={`/events/${event.id}`}>Zakoupit</Link></td>
