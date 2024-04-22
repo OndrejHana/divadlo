@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { File } from "buffer";
 
 export const ZAddress = z.object({
     id: z.number().positive(),
