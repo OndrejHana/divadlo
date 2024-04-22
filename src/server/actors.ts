@@ -64,7 +64,6 @@ export async function addActorAction(
                 actorFormData.actorImage,
             );
         }
-        console.log(imageUrl);
         await dbAddActor(session.session, {
             firstName: actorFormData.firstName,
             lastName: actorFormData.lastName,

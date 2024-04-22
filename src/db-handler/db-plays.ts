@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
-import { AddPlayFormObject, Play, UpdatePlayFormObject } from "@/types/play";
+import { DbAddPlayFormObject, Play, UpdatePlayFormObject } from "@/types/play";
+import { File } from "buffer";
 
 export async function dbGetPlays(): Promise<Play[]> {
     const { data, error } = await supabase.from("play").select("*");
@@ -16,6 +17,8 @@ export async function dbGetPlays(): Promise<Play[]> {
             name: string;
             author: string;
             yearOfRelease: number;
+            durationMinutes: number;
+            playImage: string;
         }[]
     ).map((play: any) => {
         const Play: Play = {
@@ -24,6 +27,8 @@ export async function dbGetPlays(): Promise<Play[]> {
             description: play.description,
             yearOfRelease: play.year_of_release,
             author: play.author,
+            durationMinutes: play.duration_minutes,
+            playImage: play.play_image,
         };
         return Play;
     });
@@ -47,12 +52,16 @@ export async function dbGetPlay(id: number): Promise<Play | undefined> {
         description: data[0].description,
         yearOfRelease: data[0].year_of_release,
         author: data[0].author,
+        durationMinutes: data[0].duration_minutes,
+        playImage: data[0].play_image,
     };
 
     return play;
 }
 
-export async function dbAddPlay(addPlayData: AddPlayFormObject): Promise<Play> {
+export async function dbAddPlay(
+    addPlayData: DbAddPlayFormObject,
+): Promise<Play> {
     const { data, error } = await supabase
         .from("play")
         .insert([
@@ -61,6 +70,8 @@ export async function dbAddPlay(addPlayData: AddPlayFormObject): Promise<Play> {
                 description: addPlayData.description,
                 year_of_release: addPlayData.yearOfRelease,
                 author: addPlayData.author,
+                duration_minutes: addPlayData.durationMinutes,
+                play_image: addPlayData.playImage,
             },
         ])
         .select();
@@ -78,6 +89,8 @@ export async function dbAddPlay(addPlayData: AddPlayFormObject): Promise<Play> {
         description: data[0].description,
         yearOfRelease: data[0].year_of_release,
         author: data[0].author,
+        durationMinutes: data[0].duration_minutes,
+        playImage: data[0].play_image,
     };
 
     return play;
@@ -93,6 +106,7 @@ export async function dbUpdatePlay(
             description: updatePlayData.description,
             year_of_release: updatePlayData.yearOfRelease,
             author: updatePlayData.author,
+            duration_minutes: updatePlayData.durationMinutes,
         })
         .eq("id", updatePlayData.id)
         .select();
@@ -110,6 +124,8 @@ export async function dbUpdatePlay(
         description: data[0].description,
         yearOfRelease: data[0].year_of_release,
         author: data[0].author,
+        durationMinutes: data[0].duration_minutes,
+        playImage: data[0].play_image,
     };
 
     return play;
@@ -121,4 +137,23 @@ export async function dbDeletePlay(id: number): Promise<void> {
     if (error !== null) {
         throw new Error(error.message);
     }
+}
+
+export async function uploadPlayImage(
+    imageName: string,
+    image: File,
+): Promise<string> {
+    const { data: imageData, error: imageError } = await supabase.storage
+        .from("theatre-images")
+        .upload(`public/plays/${imageName}`, image as any, { upsert: true });
+
+    if (imageError) {
+        throw new Error(imageError.message);
+    }
+
+    const { data } = supabase.storage
+        .from("theatre-images")
+        .getPublicUrl(imageData.path);
+
+    return data.publicUrl;
 }

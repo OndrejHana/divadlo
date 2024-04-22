@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { Card } from "@/components/ui/card";
 import { Play, UpdatePlayFormState } from "@/types/play";
 import DeletePlayForm from "./delete-play-form";
@@ -22,6 +24,7 @@ function SubmitButton() {
 }
 
 export default function UpdatePlayForm({ play }: { play: Play }) {
+    console.log(play);
     const initialState: UpdatePlayFormState = {
         play: {
             id: play.id,
@@ -29,6 +32,8 @@ export default function UpdatePlayForm({ play }: { play: Play }) {
             author: play.author,
             description: play.description,
             yearOfRelease: play.yearOfRelease,
+            durationMinutes: play.durationMinutes,
+            playImage: play.playImage ?? undefined,
         },
         message: "",
     };
@@ -49,6 +54,10 @@ export default function UpdatePlayForm({ play }: { play: Play }) {
     const [author, setAuthor] = useState(play.author);
     const [description, setDescription] = useState(play.description);
     const [yearOfRelease, setYearOfRelease] = useState(play.yearOfRelease);
+    const [durationMinutes, setDurationMinutes] = useState(
+        play.durationMinutes,
+    );
+    const [playImage, setPlayImage] = useState(play.playImage);
 
     return (
         <Card className="w-full max-w-2xl">
@@ -91,6 +100,26 @@ export default function UpdatePlayForm({ play }: { play: Play }) {
                     value={yearOfRelease}
                     onChange={(e) => setYearOfRelease(parseInt(e.target.value))}
                 />
+                <Label htmlFor="durationMinutes">Délka hry</Label>
+                <Input
+                    type="number"
+                    name="durationMinutes"
+                    value={durationMinutes}
+                    onChange={(e) =>
+                        setDurationMinutes(parseInt(e.target.value))
+                    }
+                />
+                {playImage ? (
+                    <Image
+                        src={playImage}
+                        alt="obrázek hry"
+                        width={240}
+                        height={240}
+                    />
+                ) : (
+                    <p className="text-sm">Obrázek hry není k dispozici</p>
+                )}
+
                 <SubmitButton />
             </form>
         </Card>
