@@ -34,13 +34,18 @@ export async function addActorAction(
         };
     }
 
-    const data = ZAddActorFormObject.safeParse({
+    const obj: any = {
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
         description: formData.get("description") as string,
-        actorImage: formData.get("actorImage") as File,
-    });
+    };
 
+    if (formData.get("hasImage") === "true") {
+        const file: File = formData.get("actorImage") as File;
+        obj["actorImage"] = file;
+    }
+
+    const data = ZAddActorFormObject.safeParse(obj);
     if (!data.success) {
         return {
             ...prevState,

@@ -25,7 +25,7 @@ export const ZAddActorFormObject = z.object({
     description: ZActor.shape.description,
     firstName: ZActor.shape.person.shape.firstName,
     lastName: ZActor.shape.person.shape.lastName,
-    actorImage: z.instanceof(File).nullable(),
+    actorImage: z.instanceof(File).optional(),
 });
 
 export const ZDbAddActorObject = z.object({
