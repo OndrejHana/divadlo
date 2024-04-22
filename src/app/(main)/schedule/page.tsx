@@ -8,17 +8,20 @@ import { dbGetEvents } from "@/db-handler/db-events";
 function PlayCard({ play }: { play: Play }) {
     return (
         <Link
-            className="w-full border-y border-primary bg-muted"
+            className="w-full border-y bg-muted justify-center"
             href={`/plays/${play.id}`}
         >
-            <div className="flex w-full flex-col gap-4 p-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-primary">
-                        {play.name}
-                    </h2>
-                    <p className="text-muted-foreground">{play.name}</p>
+            <div className="flex w-full flex-row gap p justify-center">
+                <div className="flex w-full flex-col gap-4 p-4">
+                        <h2 className="text-2xl font-bold text-primary m-0 p-0">
+                            {play.name}
+                        </h2>
+                        <p>{play.author}</p>
                 </div>
-                <p>{play.description}</p>
+                <div className="flex w-full flex-col gap-4 p-4">
+                    <p>{play.yearOfRelease}</p>
+                </div>
+
             </div>
         </Link>
     );
