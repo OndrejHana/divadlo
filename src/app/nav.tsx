@@ -26,10 +26,7 @@ export default async function Nav() {
                     <Link href="/plays">Repertoár</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                    <Link href="/">Herci</Link>
-                </Button>
-                <Button asChild variant="ghost">
-                    <Link href="/">O Divadle</Link>
+                    <Link href="/actors">Herci</Link>
                 </Button>
             </div>
             {session.isLoggedIn && session.session && <LogoutButton />}
