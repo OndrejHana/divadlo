@@ -4,22 +4,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import Link from "next/link";
 import { dbGetEvents } from "@/db-handler/db-events";
+import { Event } from "@/types/event";
 
-function PlayCard({ play }: { play: Play }) {
+function PlayCard({ event }: { event: Event }) {
     return (
         <Link
             className="w-full border-y bg-muted justify-center"
-            href={`/plays/${play.id}`}
+            href={`/events/${event.id}`}
         >
             <div className="flex w-full flex-row gap p justify-center">
                 <div className="flex w-full flex-col gap-4 p-4">
                         <h2 className="text-2xl font-bold text-primary m-0 p-0">
-                            {play.name}
+                            {event.play.name}
                         </h2>
-                        <p>{play.author}</p>
+                        <p>{event.play.author}</p>
                 </div>
                 <div className="flex w-full flex-col gap-4 p-4">
-                    <p>{play.yearOfRelease}</p>
+                    <p>{event.hall.name}</p>
+                    <p><Date>{event.time}</Date></p>
                 </div>
 
             </div>
@@ -38,11 +40,11 @@ function PlayCardSkeleton() {
 }
 
 async function PlayList() {
-    const plays = await dbGetPlays();
+    const events = await dbGetEvents();
     return (
         <div className="flex h-full w-full flex-col gap-2 p-2">
-            {plays.map((play) => (
-                <PlayCard key={play.id} play={play} />
+            {events.map((event) => (
+                <PlayCard key={event.id} event={event} />
             ))}
         </div>
     );
