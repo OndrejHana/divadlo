@@ -26,7 +26,8 @@ CREATE TABLE Visitor (
   email VARCHAR(255) UNIQUE NOT NULL,
   phone VARCHAR(20),
   address_id INT REFERENCES Address(id),
-  user_id VARCHAR(255) UNIQUE NOT NULL;
+  user_id uid UNIQUE NOT NULL;
+  role role NOT NULL;
 );
 
 -- Create Play table
