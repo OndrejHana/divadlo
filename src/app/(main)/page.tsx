@@ -4,6 +4,8 @@ import MainPageEventList from "./event-list";
 import MainPageActorList from "./actor-list";
 import image from "@/public/main.jpg";
 
+export const dynamic = "force-dynamic";
+
 export default function Page() {
     return (
         <div className="flex h-full w-full flex-col">

@@ -3,6 +3,8 @@ import { dbGetCastingsForActor } from "@/db-handler/db-casting";
 import { EventCard } from "../../event-list";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic"
+
 export default async function Page({ params }: { params: { slug: string } }) {
     const actor = await dbGetActor(parseInt(params.slug));
 
