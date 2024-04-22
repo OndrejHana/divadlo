@@ -20,7 +20,7 @@ export default async function Nav() {
                     <Link href="/">Úvod</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                    <Link href="/">Program</Link>
+                    <Link href="/schedule">Program</Link>
                 </Button>
                 <Button asChild variant="ghost">
                     <Link href="/plays">Repertoár</Link>
