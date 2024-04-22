@@ -6,7 +6,7 @@ export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
         id,
         description,
-        actorImage,
+        actor_image,
         person(id, first_name, last_name)`);
 
     if (error !== null) {
@@ -20,7 +20,7 @@ export async function dbGetActors(): Promise<Actor[]> {
         const Actor: Actor = {
             id: actor.id,
             description: actor.description,
-            actorImage: actor.actorImage,
+            actorImage: actor.actor_image,
             person: {
                 id: actor.person.id,
                 firstName: actor.person.first_name,
@@ -39,7 +39,7 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
             `
             id, 
             description,
-            actorImage,
+            actor_image,
             person(id, first_name, last_name)
         `,
         )
@@ -59,7 +59,7 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
     const actor: any = data[0];
     const Actor: Actor = {
         id: actor.id,
-        actorImage: actor.actorImage,
+        actorImage: actor.actor_image,
         description: actor.description,
         person: {
             id: actor.person.id,
@@ -110,7 +110,7 @@ export async function dbAddActor(
             {
                 id: person.id,
                 description: addActorData.description,
-                actorImage: addActorData.actorImage,
+                actor_image: addActorData.actorImage,
             },
         ])
         .select();
@@ -124,7 +124,7 @@ export async function dbAddActor(
     return {
         id: actor.id,
         description: actor.description,
-        actorImage: actor.actorImage,
+        actorImage: actor.actor_image,
         person: {
             id: person.id,
             firstName: person.first_name,
@@ -169,7 +169,7 @@ export async function dbUpdateActor(
         .from("actor")
         .update({
             description: updateFormData.description,
-            actorImage: updateFormData.actorImage,
+            actor_image: updateFormData.actorImage,
         })
         .eq("id", updateFormData.id)
         .select();
@@ -183,7 +183,7 @@ export async function dbUpdateActor(
     return {
         id: actor.id,
         description: actor.description,
-        actorImage: actor.actorImage,
+        actorImage: actor.actor_image,
         person: {
             id: person.id,
             firstName: person.first_name,

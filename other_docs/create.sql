@@ -1,3 +1,5 @@
+drop VIEW previous_events;
+drop VIEW future_events;
 drop TABLE Address, Hall, Person, Actor, Visitor, Play, Event, Casting, Ticket;
 
 CREATE TABLE Address (
@@ -17,7 +19,8 @@ CREATE TABLE Person (
 -- Create Actor table
 CREATE TABLE Actor (
   id INT PRIMARY KEY REFERENCES Person(id),
-  description VARCHAR(255)
+  description VARCHAR(255),
+  actor_image TEXT
 );
 
 -- Create Visitor table
@@ -26,8 +29,8 @@ CREATE TABLE Visitor (
   email VARCHAR(255) UNIQUE NOT NULL,
   phone VARCHAR(20),
   address_id INT REFERENCES Address(id),
-  user_id uid UNIQUE NOT NULL;
-  role role NOT NULL;
+  user_id uuid UNIQUE NOT NULL,
+  role role NOT NULL
 );
 
 -- Create Play table
