@@ -19,7 +19,7 @@ CREATE TABLE Person (
 -- Create Actor table
 CREATE TABLE Actor (
   id INT PRIMARY KEY REFERENCES Person(id),
-  description VARCHAR(255),
+  description TEXT,
   actor_image TEXT
 );
 
