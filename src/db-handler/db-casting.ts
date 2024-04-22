@@ -8,6 +8,7 @@ function dataToCasting(data: any): Casting {
         actor: {
             id: data.actor.id,
             description: data.actor.description,
+            actorImage: data.actor.actor_image,
             person: {
                 id: data.actor.person.id,
                 firstName: data.actor.person.first_name,
@@ -36,7 +37,7 @@ function dataToCasting(data: any): Casting {
 export async function dbGetCastings(): Promise<Casting[]> {
     const { data, error } = await supabase.from("casting").select(`
             id,
-            actor(id, description, 
+            actor(id, description, actor_image,
                 person(id, first_name, last_name)   
             ),
             event(id, time, 

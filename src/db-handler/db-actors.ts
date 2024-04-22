@@ -100,10 +100,13 @@ export async function dbAddActor(
         .select();
 
     if (personError !== null || personData === null) {
+        console.log("error while adding person", personError);
         throw new Error("Actor person not added");
     }
 
     const person = personData[0];
+
+    console.log(person, addActorData);
 
     const { data, error } = await supabase
         .from("actor")
@@ -117,6 +120,7 @@ export async function dbAddActor(
         .select();
 
     if (error !== null || data === null) {
+        console.log("error while adding actor", error);
         throw new Error("Actor not added");
     }
 
