@@ -21,7 +21,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     return (
         <div className="flex h-full w-full flex-col">
             <div className="flex w-full">
-                <div className="h-96 w-80 bg-muted relative">
+                <div className="h-96 w-full bg-muted relative">
                     {actor.actorImage && (
                         <Image
                             src={actor.actorImage}
