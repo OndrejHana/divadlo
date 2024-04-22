@@ -238,7 +238,7 @@ export async function uploadActorImage(
 ): Promise<string> {
     const { data: imageData, error: imageError } = await supabase.storage
         .from("theatre-images")
-        .upload(`public/actors/${imageName}`, image, { upsert: true });
+        .upload(`public/actors/${imageName}`, image as any, { upsert: true });
 
     if (imageError) {
         throw new Error(imageError.message);
