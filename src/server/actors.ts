@@ -60,10 +60,11 @@ export async function addActorAction(
         let imageUrl = null;
         if (actorFormData.actorImage) {
             imageUrl = await uploadActorImage(
-                `actor-${actorFormData.firstName}-${actorFormData.lastName}`,
+                `actor-${actorFormData.actorImage.name}`,
                 actorFormData.actorImage,
             );
         }
+        console.log(imageUrl);
         await dbAddActor(session.session, {
             firstName: actorFormData.firstName,
             lastName: actorFormData.lastName,
