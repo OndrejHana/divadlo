@@ -65,3 +65,20 @@
 .custom-grid-rows {
     grid-template-columns: repeat(20, minmax(0, 1fr));
 }
+
+.circleaftef{
+    z-index: 1;
+    position: relative;
+}
+.circleaftef::after{
+    position: absolute;
+    z-index: -5;
+    content: '';
+    display: block;
+    width: 100rem;
+    height: 100rem;
+    right: -4rem;
+    border-radius: 50%;
+    top: -35rem;
+    background-color: #500724;
+}

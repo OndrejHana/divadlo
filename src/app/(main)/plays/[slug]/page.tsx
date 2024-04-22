@@ -47,9 +47,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </AspectRatio>
             <AspectRatio
                 ratio={4 / 1}
-                className="relative flex w-full bg-muted"
+                className="relative flex w-full bg-muted overflow-hidden"
             >
-                <div className="flex flex-col gap-8 bg-secondary p-8 text-secondary-foreground">
+                <div className="flex flex-col gap-8 bg-secondary p-8 text-secondary-foreground circleaftef">
                     <div>
                         <p>Autor</p>
                         <h2 className="text-xl font-semibold">{play.author}</h2>
@@ -62,7 +62,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     </div>
                 </div>
                 <div className="p-8">
-                    <p className="text-md">{play.description}</p>
+                    <p className="text-md pl-14">{play.description}</p>
                 </div>
             </AspectRatio>
             <h2 className=" bg-primary p-2 px-8 text-2xl font-semibold text-primary-foreground">
