@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Theater } from "lucide-react";
 import Link from "next/link";
 import { getCookie } from "@/lib/cookies";
-import LogoutButton from "./logout-button";
 
 export default async function Nav() {
     const session = await getCookie();
@@ -29,12 +28,11 @@ export default async function Nav() {
                     <Link href="/actors">Herci</Link>
                 </Button>
             </div>
-            {session.isLoggedIn && session.session && <LogoutButton />}
-            {session.isLoggedIn && session.session ? (
-                <Link href={`/user/${session.session.user.id}`}>
+            {session.isLoggedIn && session.visitor ? (
+                <Link href={`/visitor/${session.visitor.id}`}>
                     <Button
                         variant="ghost"
-                        className="flex h-full items-center mr-4"
+                        className="mr-4 flex h-full items-center"
                     >
                         Můj účet
                     </Button>

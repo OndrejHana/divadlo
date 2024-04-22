@@ -24,6 +24,8 @@ function dataToCasting(data: any): Casting {
                 author: data.event.play.author,
                 description: data.event.play.description,
                 yearOfRelease: data.event.play.year_of_release,
+                durationMinutes: data.event.play.duration_minutes,
+                playImage: data.event.play.play_image,
             },
             hall: {
                 id: data.event.hall.id,
@@ -41,7 +43,7 @@ export async function dbGetCastings(): Promise<Casting[]> {
                 person(id, first_name, last_name)   
             ),
             event(id, time, 
-                play(id, name, author, description, year_of_release),
+                play(id, name, author, description, year_of_release, duration_minutes, play_image),
                 hall(id, name, number_of_seats)
             )
         `);
@@ -66,7 +68,7 @@ export async function dbGetCastingsForActor(
                 person(id, first_name, last_name)   
             ),
             event(id, time, 
-                play(id, name, author, description, year_of_release),
+                play(id, name, author, description, year_of_release, duration_minutes, play_image),
                 hall(id, name, number_of_seats)
             )
         `,

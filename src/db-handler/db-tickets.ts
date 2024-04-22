@@ -11,7 +11,7 @@ export async function dbGetTicketsByEventId(
             event(
                 id,
                 time,
-                play(id, name, author, description, year_of_release),
+                play(id, name, author, description, year_of_release, duration_minutes, play_image),
                 hall(id, name, number_of_seats)
             ),
             visitor(id, email, phone, user_id, role, address_id),
@@ -20,6 +20,46 @@ export async function dbGetTicketsByEventId(
         )
         .eq("event_id", eventId)
         .order("seat", { ascending: true });
+
+    if (data === undefined) {
+        throw new Error("Error getting tickets");
+    }
+    if (error !== null) {
+        throw new Error(error.message);
+    }
+
+    const tickets: Ticket[] = data.map((ticket: any) => {
+        return {
+            id: ticket.id,
+            event: ticket.event,
+            visitor: ticket.visitor,
+            seat: ticket.seat,
+            price: ticket.price,
+        };
+    });
+
+    return tickets;
+}
+
+export async function dbGetTicketsByVisitorId(
+    visitorId: number,
+): Promise<Ticket[]> {
+    const { data, error } = await supabase
+        .from("ticket")
+        .select(
+            `id,
+            event(
+                id,
+                time,
+                play(id, name, author, description, year_of_release, duration_minutes, play_image),
+                hall(id, name, number_of_seats)
+            ),
+            visitor(id, email, phone, user_id, role, address_id),
+            seat,
+            price`,
+        )
+        .eq("visitor_id", visitorId)
+        .order("event_id", { ascending: true });
 
     if (data === undefined) {
         throw new Error("Error getting tickets");
