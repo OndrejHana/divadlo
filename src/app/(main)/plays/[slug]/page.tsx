@@ -51,13 +51,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
             >
                 <div className="flex flex-col gap-8 bg-secondary p-8 text-secondary-foreground circleaftef">
                     <div>
-                        <p>Autor</p>
+                        <p>Autor:</p>
                         <h2 className="text-xl font-semibold">{play.author}</h2>
                     </div>
                     <div>
-                        <p>Rok vydání</p>
+                        <p>Rok vydání:</p>
                         <h2 className="text-xl font-semibold">
                             {play.yearOfRelease}
+                        </h2>
+                    </div>
+                    <div>
+                        <p>Délka hry:</p>
+                        <h2 className="text-xl font-semibold">
+                            {play.durationMinutes} minut
                         </h2>
                     </div>
                 </div>
