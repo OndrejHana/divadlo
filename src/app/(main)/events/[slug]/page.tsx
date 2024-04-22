@@ -11,6 +11,8 @@ import { Ticket } from "@/types/ticket";
 import Image from "next/image";
 import ReserveTicketPopover from "./reserve-ticket-popover";
 
+export const dynamic = "force-dynamic"
+
 function Seat({ ticket }: { ticket: Ticket }) {
     if (ticket.visitor) {
         return (

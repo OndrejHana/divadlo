@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 function PlayCard({ play }: { play: Play }) {
     return (
         <Link

@@ -5,6 +5,8 @@ import Image from "next/image";
 import image from "@/public/main.jpg";
 import { EventCard } from "../../event-list";
 
+export const dynamic = "force-dynamic";
+
 async function Events({ playId }: { playId: number }) {
     const events = await dbGetEventsByPlayId(playId);
 
