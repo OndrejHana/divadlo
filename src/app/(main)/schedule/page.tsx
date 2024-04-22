@@ -1,16 +1,12 @@
-import { dbGetPlays } from "@/db-handler/db-plays";
-import { Play } from "@/types/play";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import Link from "next/link";
 import { dbGetEvents } from "@/db-handler/db-events";
-import { Event } from "@/types/event";
-import { Table } from "lucide-react";
-
+import { Button } from "@/components/ui/button";
 
 function PlayCardSkeleton() {
     return (
-        <div className="flex h-full w-full justify-center self-center items-center justify-items-center flex-col gap-2 p-2">
+        <div className="flex h-full w-full flex-col items-center justify-center justify-items-center gap-2 self-center p-2">
             <Skeleton className="h-7 w-2/3 border-primary text-center" />
             <Skeleton className="h-7 w-2/3 border-primary text-center" />
             <Skeleton className="h-7 w-2/3 border-primary text-center" />
@@ -24,24 +20,32 @@ function PlayCardSkeleton() {
 async function PlayList() {
     const events = await dbGetEvents();
     return (
-        <table className="w-2/3">
-            <thead className="bg-orange-950 text-white">
+        <table className="w-full lg:max-w-4xl">
+            <thead className="bg-secondary text-white">
                 <tr>
-                    <th className="text-left p-2">Název akce</th>
-                    <th className="text-left p-2">Datum</th>
-                    <th className="text-left p-2">Scéna</th>
-                    <th className="text-center p-2">Vstupenky</th>
+                    <th className="p-2 text-left">Název akce</th>
+                    <th className="p-2 text-left">Datum</th>
+                    <th className="p-2 text-left">Scéna</th>
+                    <th className="p-2 text-center">Vstupenky</th>
                 </tr>
             </thead>
             <tbody>
                 {events.map((event) => (
-                    <tr className="border-solid border" key={event.id}>
+                    <tr className="border border-solid" key={event.id}>
                         <td className="p-2">
-                             <Link href={`/plays/${event.play.id}`}>{event.play.name}</Link>
+                            <Link href={`/plays/${event.play.id}`}>
+                                {event.play.name}
+                            </Link>
                         </td>
                         <td className="p-2">{event.time.toLocaleString()}</td>
                         <td className="p-2">{event.hall.name}</td>
-                        <td className="flex p-2 justify-center items-center"><Link className="items-center bg-red-950 rounded p-1 text-white" href={`/events/${event.id}`}>Zakoupit</Link></td>
+                        <td className="flex items-center justify-center p-2">
+                            <Button variant="default" asChild>
+                                <Link href={`/events/${event.id}`}>
+                                    Zakoupit
+                                </Link>
+                            </Button>
+                        </td>
                     </tr>
                 ))}
             </tbody>
@@ -55,7 +59,7 @@ export default async function Page() {
             <h1 className="w-full p-8 text-4xl font-bold text-primary">
                 Program
             </h1>
-            <div className="max-h-full grow flex justify-center">
+            <div className="flex max-h-full grow justify-center">
                 <Suspense fallback={<PlayCardSkeleton />}>
                     <PlayList />
                 </Suspense>
