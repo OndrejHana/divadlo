@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function EventCard({ event }: { event: Event }) {
     return (
-        <Link className="relative flex h-64 w-64 justify-between" href={`/events/${event.id}`}>
+        <Link className="relative flex h-64 w-64 min-w-64 justify-between" href={`/events/${event.id}`}>
             <div className="h-full w-48 bg-muted" />
             <div className="absolute right-0 flex h-full w-48 items-center">
                 <div className="flex h-4/5 w-full flex-col justify-between bg-primary text-center text-primary-foreground shadow">

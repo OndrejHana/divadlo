@@ -1,18 +1,12 @@
-import {
-    Actor,
-    AddActorFormObject,
-    UpdateActorFormObject,
-} from "@/types/actor";
-
-import { createClient } from "@supabase/supabase-js";
-const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey: string = process.env.NEXT_PUBLIC_SUPABASE_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from "@/lib/supabase";
+import { Actor, DbAddActorObject, UpdateActorFormObject } from "@/types/actor";
+import { Session } from "@supabase/supabase-js";
 
 export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
         id,
         description,
+        actorImage,
         person(id, first_name, last_name)`);
 
     if (error !== null) {
@@ -26,6 +20,7 @@ export async function dbGetActors(): Promise<Actor[]> {
         const Actor: Actor = {
             id: actor.id,
             description: actor.description,
+            actorImage: actor.actorImage,
             person: {
                 id: actor.person.id,
                 firstName: actor.person.first_name,
@@ -44,6 +39,7 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
             `
             id, 
             description,
+            actorImage,
             person(id, first_name, last_name)
         `,
         )
@@ -63,6 +59,7 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
     const actor: any = data[0];
     const Actor: Actor = {
         id: actor.id,
+        actorImage: actor.actorImage,
         description: actor.description,
         person: {
             id: actor.person.id,
@@ -75,8 +72,22 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
 }
 
 export async function dbAddActor(
-    addActorData: AddActorFormObject,
+    session: Session,
+    addActorData: DbAddActorObject,
 ): Promise<Actor> {
+    const { data: user, error: userError } = await supabase.auth.setSession({
+        refresh_token: session.refresh_token,
+        access_token: session.access_token,
+    });
+
+    if (userError !== null) {
+        throw new Error(userError.message);
+    }
+
+    if (user === null || user.user === null || user.session === null) {
+        throw new Error("User not found");
+    }
+
     const { data: personData, error: personError } = await supabase
         .from("person")
         .insert([
@@ -97,8 +108,9 @@ export async function dbAddActor(
         .from("actor")
         .insert([
             {
+                id: person.id,
                 description: addActorData.description,
-                person_id: person.id,
+                actorImage: addActorData.actorImage,
             },
         ])
         .select();
@@ -112,6 +124,7 @@ export async function dbAddActor(
     return {
         id: actor.id,
         description: actor.description,
+        actorImage: actor.actorImage,
         person: {
             id: person.id,
             firstName: person.first_name,
@@ -121,8 +134,22 @@ export async function dbAddActor(
 }
 
 export async function dbUpdateActor(
+    session: Session,
     updateFormData: UpdateActorFormObject,
 ): Promise<Actor> {
+    const { data: user, error: userError } = await supabase.auth.setSession({
+        refresh_token: session.refresh_token,
+        access_token: session.access_token,
+    });
+
+    if (userError !== null) {
+        throw new Error(userError.message);
+    }
+
+    if (user === null || user.user === null || user.session === null) {
+        throw new Error("User not found");
+    }
+
     const { data: personData, error: personError } = await supabase
         .from("person")
         .update({
@@ -142,6 +169,7 @@ export async function dbUpdateActor(
         .from("actor")
         .update({
             description: updateFormData.description,
+            actorImage: updateFormData.actorImage,
         })
         .eq("id", updateFormData.id)
         .select();
@@ -155,6 +183,7 @@ export async function dbUpdateActor(
     return {
         id: actor.id,
         description: actor.description,
+        actorImage: actor.actorImage,
         person: {
             id: person.id,
             firstName: person.first_name,
@@ -163,7 +192,23 @@ export async function dbUpdateActor(
     };
 }
 
-export async function dbDeleteActor(id: number): Promise<void> {
+export async function dbDeleteActor(
+    session: Session,
+    id: number,
+): Promise<void> {
+    const { data: user, error: userError } = await supabase.auth.setSession({
+        refresh_token: session.refresh_token,
+        access_token: session.access_token,
+    });
+
+    if (userError !== null) {
+        throw new Error(userError.message);
+    }
+
+    if (user === null || user.user === null || user.session === null) {
+        throw new Error("User not found");
+    }
+
     const { data, error } = await supabase
         .from("actor")
         .delete()
@@ -178,24 +223,29 @@ export async function dbDeleteActor(id: number): Promise<void> {
     const { data: personData, error: personError } = await supabase
         .from("person")
         .delete()
-        .eq("id", actor.person_id)
+        .eq("id", actor.id)
         .select();
 
     if (personError !== null || personData === null) {
         throw new Error(personError.message);
     }
+}
 
-    const person = personData[0];
+export async function uploadActorImage(
+    imageName: string,
+    image: File,
+): Promise<string> {
+    const { data: imageData, error: imageError } = await supabase.storage
+        .from("theatre-images")
+        .upload(`public/actors/${imageName}`, image, { upsert: true });
 
-    const { data: addressData, error: addressError } = await supabase
-        .from("address")
-        .delete()
-        .eq("id", person.address_id)
-        .select();
-
-    if (addressError !== null || addressData === null) {
-        throw new Error(addressError.message);
+    if (imageError) {
+        throw new Error(imageError.message);
     }
 
-    return;
+    const { data } = supabase.storage
+        .from("theatre-images")
+        .getPublicUrl(imageData.path);
+
+    return data.publicUrl;
 }

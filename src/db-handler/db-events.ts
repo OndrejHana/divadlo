@@ -1,16 +1,9 @@
+import { supabase } from "@/lib/supabase";
 import {
     AddEventFormObject,
     Event,
     UpdateEventFormObject,
 } from "@/types/event";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
-if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase URL or key is missing.");
-}
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function dbGetEvents(): Promise<Event[]> {
     const { data, error } = await supabase.from("event").select(`
@@ -204,3 +197,63 @@ export async function dbDeleteEvent(id: number): Promise<void> {
         throw new Error(error.message);
     }
 }
+
+export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
+    const { data, error } = await supabase
+        .from("event")
+        .select(`
+            id,
+            time,
+            play(id, name, author, description, year_of_release),
+            hall(id, name, number_of_seats)
+        `)
+        .eq("play_id", playId);
+
+    if (error !== null) {
+        throw new Error(error.message);
+    }
+
+    if (
+        data === undefined ||
+        data === null ||
+        data.length === 0
+    ) {
+        return [];
+    }
+
+    const events: Event[] = (
+        data as unknown as {
+            id: number;
+            time: string;
+            play: {
+                id: number;
+                name: string;
+                author: string;
+                description: string;
+                year_of_release: number;
+            };
+            hall: { id: number; name: string; number_of_seats: number };
+        }[]
+    ).map((event: any) => {
+        const Event: Event = {
+            id: event.id,
+            time: new Date(event.time),
+            play: {
+                id: event.play.id,
+                name: event.play.name,
+                author: event.play.author,
+                description: event.play.description,
+                yearOfRelease: event.play.year_of_release,
+            },
+            hall: {
+                id: event.hall.id,
+                name: event.hall.name,
+                numberOfSeats: event.hall.number_of_seats,
+            },
+        };
+        return Event;
+    });
+
+    return events;
+}
+

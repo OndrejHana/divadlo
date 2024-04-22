@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addActorAction } from "@/server/actors";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
-import { registerUserAction } from "@/server/register";
+import { registerUserAction } from "@/server/auth";
 import { RegisterUserFormState } from "@/types/register";
 
 const initialState: RegisterUserFormState = {
