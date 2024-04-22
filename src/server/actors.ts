@@ -16,6 +16,7 @@ import {
     ZUpdateActorFormObject,
 } from "@/types/actor";
 import { redirect } from "next/navigation";
+import { File } from "buffer";
 
 export async function addActorAction(
     prevState: AddActorFormState,
@@ -41,7 +42,7 @@ export async function addActorAction(
     };
 
     if (formData.get("hasImage") === "true") {
-        const file: File = formData.get("actorImage") as File;
+        const file: File = formData.get("actorImage") as unknown as File;
         obj["actorImage"] = file;
     }
 

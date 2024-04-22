@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Actor, DbAddActorObject, UpdateActorFormObject } from "@/types/actor";
 import { Session } from "@supabase/supabase-js";
+import { File } from "buffer";
 
 export async function dbGetActors(): Promise<Actor[]> {
     const { data, error } = await supabase.from("actor").select(`
