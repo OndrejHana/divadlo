@@ -51,11 +51,14 @@ export async function addActorAction(
     const actorFormData = data.data;
 
     try {
-        const imageUrl = await uploadActorImage(
-            `actor-${actorFormData.firstName}-${actorFormData.lastName}`,
-            actorFormData.actorImage,
-        );
-        await dbAddActor(session.session,{
+        let imageUrl = null;
+        if (actorFormData.actorImage) {
+            imageUrl = await uploadActorImage(
+                `actor-${actorFormData.firstName}-${actorFormData.lastName}`,
+                actorFormData.actorImage,
+            );
+        }
+        await dbAddActor(session.session, {
             firstName: actorFormData.firstName,
             lastName: actorFormData.lastName,
             description: actorFormData.description,
