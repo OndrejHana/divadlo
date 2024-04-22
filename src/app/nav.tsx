@@ -8,7 +8,7 @@ export default async function Nav() {
     const session = await getCookie();
 
     return (
-        <nav className="top-0 z-50 flex w-full items-center gap-2 bg-primary/40 p-4 text-primary-foreground drop-shadow-lg backdrop-blur-md lg:sticky lg:gap-16">
+        <nav className="top-0 z-50 flex w-full items-center gap-0 bg-primary/40 p-4 text-primary-foreground drop-shadow-lg backdrop-blur-md lg:sticky lg:gap-16">
             <Link href="/" className="flex h-full items-center">
                 <h1 className="flex items-center gap-2 text-center text-2xl font-bold">
                     <Theater className="w-6" />
@@ -34,7 +34,7 @@ export default async function Nav() {
                 <Link href={`/user/${session.session.user.id}`}>
                     <Button
                         variant="ghost"
-                        className="flex h-full items-center"
+                        className="flex h-full items-center mr-4"
                     >
                         Můj účet
                     </Button>
