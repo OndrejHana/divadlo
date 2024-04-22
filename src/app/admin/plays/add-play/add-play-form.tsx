@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { addPlayAction } from "@/server/plays";
 import { AddPlayFormState } from "@/types/play";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialState: AddPlayFormState = {
@@ -28,6 +28,7 @@ function SubmitButton() {
 
 export default function AddPlayForm() {
     const [state, formAction] = useFormState(addPlayAction, initialState);
+    const [hasImage, setHasImage] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -68,6 +69,34 @@ export default function AddPlayForm() {
                     name="yearOfRelease"
                     placeholder="Rok vydání"
                 />
+                <Label htmlFor="durationMinutes" className="text-md">
+                    Délka hry
+                </Label>
+                <Input
+                    type="number"
+                    name="durationMinutes"
+                    placeholder="Délka hry"
+                />
+                <Label htmlFor="playImage" className="text-md">
+                    Portrét herce
+                </Label>
+                <Input
+                    type="file"
+                    name="playImage"
+                    onChange={(e) => {
+                        if (!e.target.files) return;
+                        const file = e.target.files[0];
+                        if (file) {
+                            setHasImage(true);
+                        }
+                    }}
+                />
+                <Input
+                    type="hidden"
+                    name="hasImage"
+                    value={hasImage.toString()}
+                />
+
                 <SubmitButton />
             </form>
         </Card>

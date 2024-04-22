@@ -1,6 +1,13 @@
 "use server";
 
-import { dbAddPlay, dbDeletePlay, dbUpdatePlay } from "@/db-handler/db-plays";
+import { File } from "buffer";
+
+import {
+    dbAddPlay,
+    dbDeletePlay,
+    dbUpdatePlay,
+    uploadPlayImage,
+} from "@/db-handler/db-plays";
 import { ZDeleteEventFormObject } from "@/types/event";
 import {
     AddPlayFormState,
@@ -16,12 +23,20 @@ export async function addPlayAction(
     prevState: AddPlayFormState,
     formData: FormData,
 ): Promise<AddPlayFormState> {
-    const data = ZAddPlayFormObject.safeParse({
+    const obj: any = {
         name: formData.get("name") as string,
         author: formData.get("author") as string,
         description: formData.get("description") as string,
         yearOfRelease: parseInt(formData.get("yearOfRelease") as string),
-    });
+        durationMinutes: parseInt(formData.get("durationMinutes") as string),
+    };
+
+    if (formData.get("hasImage") === "true") {
+        const file: File = formData.get("playImage") as unknown as File;
+        obj["playImage"] = file;
+    }
+
+    const data = ZAddPlayFormObject.safeParse(obj);
 
     if (!data.success) {
         return {
@@ -32,7 +47,22 @@ export async function addPlayAction(
 
     const playFormData = data.data;
     try {
-        const newPlay = await dbAddPlay(playFormData);
+        let imageUrl = null;
+        if (playFormData.playImage) {
+            imageUrl = await uploadPlayImage(
+                `play-${playFormData.playImage.name}`,
+                playFormData.playImage,
+            );
+        }
+
+        const newPlay = await dbAddPlay({
+            name: playFormData.name,
+            author: playFormData.author,
+            description: playFormData.description,
+            yearOfRelease: playFormData.yearOfRelease,
+            durationMinutes: playFormData.durationMinutes,
+            playImage: imageUrl,
+        });
         revalidatePath("/admin/plays");
     } catch (e) {
         console.error(e);
@@ -54,6 +84,8 @@ export async function updatePlayAction(
         author: formData.get("author") as string,
         description: formData.get("description") as string,
         yearOfRelease: parseInt(formData.get("yearOfRelease") as string),
+        durationMinutes: parseInt(formData.get("durationMinutes") as string),
+        playImage: formData.get("playImage") as string,
     });
 
     if (!data.success) {

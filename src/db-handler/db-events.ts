@@ -9,7 +9,7 @@ export async function dbGetEvents(): Promise<Event[]> {
     const { data, error } = await supabase.from("event").select(`
             id,
             time,
-            play(id, name, author, description, year_of_release),
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
         `);
 
@@ -28,6 +28,8 @@ export async function dbGetEvents(): Promise<Event[]> {
                 author: string;
                 description: string;
                 year_of_release: number;
+                duration_minutes: number;
+                play_image: string;
             };
             hall: { id: number; name: string; number_of_seats: number };
         }[]
@@ -41,6 +43,8 @@ export async function dbGetEvents(): Promise<Event[]> {
                 author: event.play.author,
                 description: event.play.description,
                 yearOfRelease: event.play.year_of_release,
+                durationMinutes: event.play.duration_minutes,
+                playImage: event.play.play_image,
             },
             hall: {
                 id: event.hall.id,
@@ -61,7 +65,7 @@ export async function dbGetEvent(id: number): Promise<Event | null> {
             `
             id,
             time,
-            play(id, name, author, description, year_of_release),
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
         `,
         )
@@ -88,6 +92,8 @@ export async function dbGetEvent(id: number): Promise<Event | null> {
             author: event.play.author,
             description: event.play.description,
             yearOfRelease: event.play.year_of_release,
+            durationMinutes: event.play.duration_minutes,
+            playImage: event.play.play_image,
         },
         hall: {
             id: event.hall.id,
@@ -111,7 +117,7 @@ export async function dbAddEvent(
     ]).select(`
             id,
             time,
-            play(id, name, author, description, year_of_release),
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
         `);
 
@@ -133,6 +139,8 @@ export async function dbAddEvent(
             yearOfRelease: event.play.year_of_release,
             description: event.play.description,
             author: event.play.author,
+            durationMinutes: event.play.duration_minutes,
+            playImage: event.play.play_image,
         },
         hall: {
             id: event.hall.id,
@@ -157,7 +165,7 @@ export async function dbUpdateEvent(
         .eq("id", updateEventData.id).select(`
             id,
             time,
-            play(id, name, author, description, year_of_release),
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
         `);
 
@@ -179,6 +187,8 @@ export async function dbUpdateEvent(
             author: event.play.author,
             yearOfRelease: event.play.year_of_release,
             description: event.play.description,
+            durationMinutes: event.play.duration_minutes,
+            playImage: event.play.play_image,
         },
         hall: {
             id: event.hall.id,
@@ -204,7 +214,7 @@ export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
         .select(`
             id,
             time,
-            play(id, name, author, description, year_of_release),
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
         `)
         .eq("play_id", playId);
@@ -231,6 +241,8 @@ export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
                 author: string;
                 description: string;
                 year_of_release: number;
+                duration_minutes: number;
+                play_image: string;
             };
             hall: { id: number; name: string; number_of_seats: number };
         }[]
@@ -244,6 +256,8 @@ export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
                 author: event.play.author,
                 description: event.play.description,
                 yearOfRelease: event.play.year_of_release,
+                durationMinutes: event.play.duration_minutes,
+                playImage: event.play.play_image,
             },
             hall: {
                 id: event.hall.id,
