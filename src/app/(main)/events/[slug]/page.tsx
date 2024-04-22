@@ -11,7 +11,7 @@ import { Ticket } from "@/types/ticket";
 import Image from "next/image";
 import ReserveTicketPopover from "./reserve-ticket-popover";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 function Seat({ ticket }: { ticket: Ticket }) {
     if (ticket.visitor) {
@@ -64,7 +64,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     )}
                 </div>
                 <Image
-                    src={image}
+                    src={event?.play.playImage || image}
                     layout="fill"
                     objectFit="cover"
                     alt="Theater"

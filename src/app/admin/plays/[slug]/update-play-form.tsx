@@ -24,7 +24,6 @@ function SubmitButton() {
 }
 
 export default function UpdatePlayForm({ play }: { play: Play }) {
-    console.log(play);
     const initialState: UpdatePlayFormState = {
         play: {
             id: play.id,
