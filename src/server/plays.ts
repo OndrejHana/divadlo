@@ -102,7 +102,15 @@ export async function updatePlayAction(
         revalidatePath(`/admin/plays/${updatedPlay.id}`);
 
         return {
-            play: updatedPlay,
+            play: {
+                id: updatedPlay.id,
+                name: updatedPlay.name,
+                durationMinutes: updatedPlay.durationMinutes,
+                playImage: updatedPlay.playImage?? undefined,
+                yearOfRelease: updatedPlay.yearOfRelease,
+                description: updatedPlay.description,
+                author: updatedPlay.author,
+            },
             message: "Hra byla upravena",
         };
     } catch (e) {
