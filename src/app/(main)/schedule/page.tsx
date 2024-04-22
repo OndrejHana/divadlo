@@ -7,35 +7,16 @@ import { dbGetEvents } from "@/db-handler/db-events";
 import { Event } from "@/types/event";
 import { Table } from "lucide-react";
 
-function PlayCard({ event }: { event: Event }) {
-    return (
-        <Link
-            className="w-full border-y bg-muted justify-center"
-            href={`/events/${event.id}`}
-        >
-            <div className="flex w-full flex-row gap p justify-center">
-                <div className="flex w-full flex-col gap-4 p-4">
-                        <h2 className="text-2xl font-bold text-primary m-0 p-0">
-                            {event.play.name}
-                        </h2>
-                        <p>{event.play.author}</p>
-                </div>
-                <div className="flex w-full flex-col gap-4 p-4">
-                    <p>{event.hall.name}</p>
-                    <p><Date>{event.time}</Date></p>
-                </div>
-
-            </div>
-        </Link>
-    );
-}
 
 function PlayCardSkeleton() {
     return (
-        <div className="flex h-full w-full flex-col gap-2 p-2">
-            <Skeleton className="h-32 w-full rounded-none border-y border-primary" />
-            <Skeleton className="h-32 w-full rounded-none border-y border-primary" />
-            <Skeleton className="h-32 w-full rounded-none border-y border-primary" />
+        <div className="flex h-full w-full justify-center self-center items-center justify-items-center flex-col gap-2 p-2">
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
+            <Skeleton className="h-7 w-2/3 border-primary text-center" />
         </div>
     );
 }
