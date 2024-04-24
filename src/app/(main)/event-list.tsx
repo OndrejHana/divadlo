@@ -10,11 +10,13 @@ export function EventCard({ event }: { event: Event }) {
             className="relative flex h-64 w-64 min-w-64 justify-between"
             href={`/events/${event.id}`}
         >
-            <div className="h-full w-48 bg-muted">
+            <div className="h-full w-48 bg-muted relative">
+                <div className="h-full w-full bg-muted" />
                 {event.play.playImage && (
                     <Image
-                        src={event.play.playImage}
+                        src={event.play.playImage!}
                         alt={event.play.name}
+                        className="h-full w-full object-cover absolute  top-0"
                         width={192}
                         height={192}
                     />

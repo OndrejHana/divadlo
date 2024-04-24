@@ -34,7 +34,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <div className="flex h-full w-full flex-col justify-center">
             <AspectRatio ratio={4 / 1} className="relative w-full bg-muted">
                 <Image
-                    src={image}
+                    src={play.playImage || image}
                     layout="fill"
                     objectFit="cover"
                     alt="Theater"
