@@ -78,7 +78,7 @@ export default function AddPlayForm() {
                     placeholder="Délka hry"
                 />
                 <Label htmlFor="playImage" className="text-md">
-                    Portrét herce
+                    Obrázek hry
                 </Label>
                 <Input
                     type="file"
