@@ -11,6 +11,7 @@ export async function dbGetActors(): Promise<Actor[]> {
         person(id, first_name, last_name)`);
 
     if (error !== null) {
+        console.error(error);
         throw new Error(error.message);
     }
     if (data === null || data === undefined) {
@@ -47,14 +48,15 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
         .eq("id", id)
         .limit(1);
 
+    if (error !== null) {
+        console.error(error);
+        throw new Error(error.message);
+    }
     if (data === undefined) {
         return undefined;
     }
     if (data === null || data.length != 1) {
         return undefined;
-    }
-    if (error !== null) {
-        throw new Error(error);
     }
 
     const actor: any = data[0];
@@ -82,6 +84,7 @@ export async function dbAddActor(
     });
 
     if (userError !== null) {
+        console.error(userError);
         throw new Error(userError.message);
     }
 
@@ -99,14 +102,16 @@ export async function dbAddActor(
         ])
         .select();
 
-    if (personError !== null || personData === null) {
-        console.log("error while adding person", personError);
-        throw new Error("Actor person not added");
+    if (personError !== null) {
+        console.error(personError);
+        throw new Error(personError.message);
+    }
+
+    if (personData === null || personData.length === 0) {
+        throw new Error("Person not added");
     }
 
     const person = personData[0];
-
-    console.log(person, addActorData);
 
     const { data, error } = await supabase
         .from("actor")
@@ -119,8 +124,12 @@ export async function dbAddActor(
         ])
         .select();
 
-    if (error !== null || data === null) {
-        console.log("error while adding actor", error);
+    if (error !== null) {
+        console.error(error);
+        throw new Error(error.message);
+    }
+
+    if (data === null || data.length === 0) {
         throw new Error("Actor not added");
     }
 
@@ -165,8 +174,13 @@ export async function dbUpdateActor(
         .eq("id", updateFormData.id)
         .select();
 
-    if (error !== null || data === null) {
+    if (error !== null) {
+        console.error(error);
         throw new Error(error.message);
+    }
+
+    if (data === null || data.length === 0) {
+        throw new Error("Actor not updated");
     }
 
     const actor = data[0];
@@ -193,6 +207,7 @@ export async function dbDeleteActor(
     });
 
     if (userError !== null) {
+        console.error(userError);
         throw new Error(userError.message);
     }
 

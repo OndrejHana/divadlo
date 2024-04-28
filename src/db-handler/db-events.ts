@@ -201,33 +201,55 @@ export async function dbUpdateEvent(
 }
 
 export async function dbDeleteEvent(id: number): Promise<void> {
-    const { error } = await supabase.from("event").delete().eq("id", id);
+    const { error: ticketsError } = await supabase
+        .from("ticket")
+        .delete()
+        .eq("event_id", id);
 
-    if (error !== null) {
-        throw new Error(error.message);
+    if (ticketsError !== null) {
+        console.error(ticketsError);
+        throw new Error(ticketsError.message);
+    }
+
+    const { error: castingsError } = await supabase
+        .from("casting")
+        .delete()
+        .eq("event_id", id);
+
+    if (castingsError !== null) {
+        console.error(castingsError);
+        throw new Error(castingsError.message);
+    }
+
+    const { error: eventsError } = await supabase
+        .from("event")
+        .delete()
+        .eq("id", id);
+
+    if (eventsError !== null) {
+        console.error(eventsError);
+        throw new Error(eventsError.message);
     }
 }
 
 export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
     const { data, error } = await supabase
         .from("event")
-        .select(`
+        .select(
+            `
             id,
             time,
             play(id, name, author, description, year_of_release, duration_minutes, play_image),
             hall(id, name, number_of_seats)
-        `)
+        `,
+        )
         .eq("play_id", playId);
 
     if (error !== null) {
         throw new Error(error.message);
     }
 
-    if (
-        data === undefined ||
-        data === null ||
-        data.length === 0
-    ) {
+    if (data === undefined || data === null || data.length === 0) {
         return [];
     }
 
@@ -270,4 +292,3 @@ export async function dbGetEventsByPlayId(playId: number): Promise<Event[]> {
 
     return events;
 }
-

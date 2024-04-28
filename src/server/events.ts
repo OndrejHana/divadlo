@@ -22,7 +22,6 @@ export async function addEventAction(
     prevState: AddEventFormState,
     formData: FormData,
 ): Promise<AddEventFormState> {
-    console.log("addEventAction", formData);
     const data = ZAddEventFormObject.safeParse({
         playId: parseInt(formData.get("playId") as string),
         hallId: parseInt(formData.get("hallId") as string),
@@ -33,7 +32,7 @@ export async function addEventAction(
         console.error(data.error);
         return {
             ...prevState,
-            message: "Chyba při zpracování formuláře",
+            message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
 
@@ -63,8 +62,6 @@ export async function addEventAction(
         }));
 
         await dbAddCastings(dbCastings);
-
-        revalidatePath("/admin/events");
     } catch (e) {
         console.error(e);
         return {
@@ -88,7 +85,9 @@ export async function updateEvent(
     });
 
     if (!data.success) {
+        console.error(data.error);
         return {
+            ...prevState,
             message: data.error.errors.map((e) => e.message).join(", "),
         };
     }
@@ -97,8 +96,6 @@ export async function updateEvent(
 
     try {
         const newEvent = await dbUpdateEvent(event);
-        revalidatePath("/admin/events");
-        revalidatePath("/admin/events/[slug]", "page");
 
         return {
             event: {
@@ -126,7 +123,9 @@ export async function deleteEvent(
     });
 
     if (!data.success) {
+        console.error(data.error);
         return {
+            ...prevState,
             message: data.error.errors.map((e) => e.message).join(", "),
         };
     }

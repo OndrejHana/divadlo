@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 
 function Card({ actor }: { actor: Actor }) {
-    console.log(actor);
     return (
         <div className="relative h-64 min-w-48">
             {actor.actorImage ? (
@@ -12,7 +11,7 @@ function Card({ actor }: { actor: Actor }) {
                     src={actor.actorImage}
                     layout="fill"
                     objectFit="cover"
-                    alt=""
+                    alt="actor"
                 />
             ) : (
                 <div className="h-full w-full bg-muted" />

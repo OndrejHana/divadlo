@@ -16,7 +16,6 @@ import { LoginUserFormState, ZLoginFormObject } from "@/types/login";
 
 import { supabase } from "@/lib/supabase";
 
-
 export async function registerUserAction(
     prevState: RegisterUserFormState,
     formData: FormData,
@@ -29,6 +28,7 @@ export async function registerUserAction(
     });
 
     if (!registerFormObject.success) {
+        console.error(registerFormObject.error);
         return {
             ...prevState,
             message: registerFormObject.error.errors
@@ -38,7 +38,6 @@ export async function registerUserAction(
     }
 
     const registerFormData = registerFormObject.data;
-    console.log("registerFormData: ", registerFormData);
     const authResponse = await supabaseRegisterUser(registerFormData);
 
     if (!authResponse) {
@@ -54,15 +53,8 @@ export async function registerUserAction(
     session.visitor = authResponse?.visitor;
     session.isLoggedIn = true;
 
-    console.log("register: ", {
-        ironSession: session,
-        supabaseSession: await supabase.auth.getSession(),
-        supabaseUser: await supabase.auth.getUser(),
-    });
-
     await session.save();
 
-    revalidatePath("/");
     redirect("/");
 }
 
@@ -91,35 +83,18 @@ export async function loginUserAction(
     session.isLoggedIn = true;
 
     await session.save();
-
-    console.log("login: ", {
-        ironSession: session,
-        supabaseSession: await supabase.auth.getSession(),
-        supabaseUser: await supabase.auth.getUser(),
-    });
-
-    revalidatePath("/");
     redirect("/");
 }
 
 export async function logoutUser(): Promise<void> {
-    console.log("logoutUser");
     const session = await getCookie();
 
     await dbLogoutUser();
-
-    console.log("logout: ", {
-        ironSession: session,
-        supabaseSession: await supabase.auth.getSession(),
-        supabaseUser: await supabase.auth.getUser(),
-    });
 
     session.session = null;
     session.visitor = null;
     session.isLoggedIn = false;
 
     await session.save();
-
-    revalidatePath("/");
     redirect("/");
 }
