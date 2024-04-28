@@ -6,12 +6,38 @@ import { HallInput, PlayInput } from "../form-buttons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Suspense } from "react";
+import CastingForm from "./castings/casting-form";
+import { PlusSquare } from "lucide-react";
 
-function Loading() {
+function PlaySkeleton() {
     return (
-        <div className="flex flex-col gap-4 p-4">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
+        <div className="flex w-full justify-between">
+            <Skeleton className="h-8 w-1/2" />
+            <Button variant="default" disabled>
+                Přidat hru
+            </Button>
+        </div>
+    );
+}
+
+function HallSkeleton() {
+    return (
+        <div className="flex w-full justify-between">
+            <Skeleton className="h-8 w-1/2" />
+            <Button variant="default" disabled>
+                Přidat sál
+            </Button>
+        </div>
+    );
+}
+
+function CastingSkeleton() {
+    return (
+        <div className="flex w-full justify-between ">
+            <Skeleton className="h-8 w-1/2" />
+            <Button variant="default" disabled>
+                <PlusSquare />
+            </Button>
         </div>
     );
 }
@@ -28,9 +54,9 @@ export default function Page() {
                         Přidejte novou divadelní akci do systému
                     </p>
                 </div>
-                <Suspense fallback={<Loading />}>
-                    <AddEventForm>
-                        <Label htmlFor="play">Hra</Label>
+                <AddEventForm>
+                    <Suspense fallback={<PlaySkeleton />}>
+                        <Label htmlFor="playId">Hra</Label>
                         <div className="flex w-full gap-2">
                             <PlayInput />
                             <Button asChild>
@@ -39,7 +65,9 @@ export default function Page() {
                                 </Link>
                             </Button>
                         </div>
-                        <Label htmlFor="hall">Sál</Label>
+                    </Suspense>
+                    <Suspense fallback={<HallSkeleton />}>
+                        <Label htmlFor="hallId">Sál</Label>
                         <div className="flex w-full gap-2">
                             <HallInput />
                             <Button asChild>
@@ -48,8 +76,11 @@ export default function Page() {
                                 </Link>
                             </Button>
                         </div>
-                    </AddEventForm>
-                </Suspense>
+                    </Suspense>
+                    <Suspense fallback={<CastingSkeleton />}>
+                        <CastingForm />
+                    </Suspense>
+                </AddEventForm>
             </Card>
         </div>
     );

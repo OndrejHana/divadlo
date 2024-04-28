@@ -1,10 +1,12 @@
 "use server";
 
+import { dbAddCastings } from "@/db-handler/db-casting";
 import {
     dbAddEvent,
     dbDeleteEvent,
     dbUpdateEvent,
 } from "@/db-handler/db-events";
+import { DbAddCasting, ZAddCasting } from "@/types/casting";
 import {
     AddEventFormState,
     DeleteEventFormState,
@@ -20,6 +22,7 @@ export async function addEventAction(
     prevState: AddEventFormState,
     formData: FormData,
 ): Promise<AddEventFormState> {
+    console.log("addEventAction", formData);
     const data = ZAddEventFormObject.safeParse({
         playId: parseInt(formData.get("playId") as string),
         hallId: parseInt(formData.get("hallId") as string),
@@ -27,16 +30,40 @@ export async function addEventAction(
     });
 
     if (!data.success) {
+        console.error(data.error);
         return {
             ...prevState,
-            message: data.error.errors.map((e) => e.message).join(", "),
+            message: "Chyba při zpracování formuláře",
         };
     }
 
     const parsedEvent = data.data;
+    let castings = [];
 
     try {
-        await dbAddEvent(parsedEvent);
+        castings = formData
+            .getAll("castings")
+            .map((c) => JSON.parse(c as string))
+            .map((c) => ZAddCasting.parse(c));
+    } catch (e) {
+        console.error(e);
+        return {
+            ...prevState,
+            message: "Chyba při zpracování obsazení",
+        };
+    }
+
+    try {
+        const event = await dbAddEvent(parsedEvent);
+
+        const dbCastings: DbAddCasting[] = castings.map((c) => ({
+            character: c.character,
+            actor_id: c.actorId,
+            event_id: event.id,
+        }));
+
+        await dbAddCastings(dbCastings);
+
         revalidatePath("/admin/events");
     } catch (e) {
         console.error(e);

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Casting } from "@/types/casting";
+import { AddCasting, Casting, DbAddCasting } from "@/types/casting";
 
 function dataToCasting(data: any): Casting {
     return {
@@ -81,4 +81,15 @@ export async function dbGetCastingsForActor(
     }
 
     return data.map(dataToCasting);
+}
+
+export async function dbAddCastings(
+    addCastings: DbAddCasting[],
+): Promise<void> {
+    const { error } = await supabase.from("casting").insert(addCastings);
+
+    if (error !== null) {
+        console.error("add casting error", error);
+        throw new Error(error.message);
+    }
 }

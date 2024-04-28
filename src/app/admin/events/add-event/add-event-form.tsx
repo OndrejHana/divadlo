@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { DateTimePicker } from "@/components/datetime-picker";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PlusSquare } from "lucide-react";
+
 
 const initialState: AddEventFormState = {
     event: undefined,
@@ -47,9 +50,13 @@ export default function AddEventForm({
 
     return (
         <form action={formAction} className="flex flex-col gap-2 p-4">
-            {children}
             <Label htmlFor="time">Čas</Label>
-            <Input type="hidden" name="time" value={time.toISOString()} />
+            <Input
+                type="hidden"
+                id="time"
+                name="time"
+                value={time.toISOString()}
+            />
             <DateTimePicker
                 value={{
                     date: time,
@@ -59,6 +66,7 @@ export default function AddEventForm({
                     setTime(date);
                 }}
             />
+            {children}
             <SubmitButton />
         </form>
     );

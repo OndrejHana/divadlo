@@ -70,7 +70,7 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
                         Upravte existujícího herce v systému
                     </p>
                 </div>
-                <DeleteActorForm actorId={actor.id} />
+               <DeleteActorForm actorId={actor.id} />
             </div>
             <form action={formAction} className="flex flex-col gap-2 p-4">
                 <Input type="hidden" name="id" value={state.actor.id} />
