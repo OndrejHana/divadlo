@@ -102,9 +102,11 @@ export async function updateActorAction(
         description: formData.get("description") as string,
         firstName: formData.get("firstName") as string,
         lastName: formData.get("lastName") as string,
+        actorImage: (formData.get("actorImage") as string) ?? null,
     });
 
     if (!data.success) {
+        console.error("rip parsing data", data.error.errors);
         return {
             ...prevState,
             message: data.error.errors.map((e) => e.message).join(", "),
@@ -113,7 +115,7 @@ export async function updateActorAction(
 
     const actorFormData = data.data;
     try {
-        const actor = await dbUpdateActor(session.session, actorFormData);
+        const actor = await dbUpdateActor(actorFormData);
 
         return {
             actor: {
@@ -126,7 +128,7 @@ export async function updateActorAction(
             message: "Herec byl upraven",
         };
     } catch (error) {
-        console.error(error);
+        console.error("rip database", error);
         return {
             message: "Nepodařilo se upravit herce",
         };

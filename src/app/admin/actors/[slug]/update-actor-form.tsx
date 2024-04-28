@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 function SubmitButton() {
     const { pending } = useFormStatus();
 
@@ -94,12 +96,19 @@ export default function UpdateActorForm({ actor }: { actor: Actor }) {
                 />
                 <Label htmlFor="actorImage">Portrét herce</Label>
                 {actorImage ? (
-                    <Image
-                        src={actorImage}
-                        alt="portrét herce"
-                        width={240}
-                        height={240}
-                    />
+                    <>
+                        <Input
+                            type="hidden"
+                            name="actorImage"
+                            value={actorImage}
+                        />
+                        <Image
+                            src={actorImage}
+                            alt="portrét herce"
+                            width={240}
+                            height={240}
+                        />
+                    </>
                 ) : (
                     <p className="text-sm">Portrét herce není k dispozici</p>
                 )}

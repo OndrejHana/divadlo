@@ -139,22 +139,8 @@ export async function dbAddActor(
 }
 
 export async function dbUpdateActor(
-    session: Session,
     updateFormData: UpdateActorFormObject,
 ): Promise<Actor> {
-    const { data: user, error: userError } = await supabase.auth.setSession({
-        refresh_token: session.refresh_token,
-        access_token: session.access_token,
-    });
-
-    if (userError !== null) {
-        throw new Error(userError.message);
-    }
-
-    if (user === null || user.user === null || user.session === null) {
-        throw new Error("User not found");
-    }
-
     const { data: personData, error: personError } = await supabase
         .from("person")
         .update({

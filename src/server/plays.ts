@@ -85,7 +85,7 @@ export async function updatePlayAction(
         description: formData.get("description") as string,
         yearOfRelease: parseInt(formData.get("yearOfRelease") as string),
         durationMinutes: parseInt(formData.get("durationMinutes") as string),
-        playImage: formData.get("playImage") as string,
+        playImage: formData.get("playImage") as string ?? undefined,
     });
 
     if (!data.success) {
@@ -106,7 +106,7 @@ export async function updatePlayAction(
                 id: updatedPlay.id,
                 name: updatedPlay.name,
                 durationMinutes: updatedPlay.durationMinutes,
-                playImage: updatedPlay.playImage?? undefined,
+                playImage: updatedPlay.playImage ?? undefined,
                 yearOfRelease: updatedPlay.yearOfRelease,
                 description: updatedPlay.description,
                 author: updatedPlay.author,
