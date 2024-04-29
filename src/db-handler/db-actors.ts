@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
 import { Actor, DbAddActorObject, UpdateActorFormObject } from "@/types/actor";
-import { Session } from "@supabase/supabase-js";
 import { File } from "buffer";
 
 export async function dbGetActors(): Promise<Actor[]> {
@@ -75,23 +74,8 @@ export async function dbGetActor(id: number): Promise<Actor | undefined> {
 }
 
 export async function dbAddActor(
-    session: Session,
     addActorData: DbAddActorObject,
 ): Promise<Actor> {
-    const { data: user, error: userError } = await supabase.auth.setSession({
-        refresh_token: session.refresh_token,
-        access_token: session.access_token,
-    });
-
-    if (userError !== null) {
-        console.error(userError);
-        throw new Error(userError.message);
-    }
-
-    if (user === null || user.user === null || user.session === null) {
-        throw new Error("User not found");
-    }
-
     const { data: personData, error: personError } = await supabase
         .from("person")
         .insert([
@@ -198,23 +182,8 @@ export async function dbUpdateActor(
 }
 
 export async function dbDeleteActor(
-    session: Session,
     id: number,
 ): Promise<void> {
-    const { data: user, error: userError } = await supabase.auth.setSession({
-        refresh_token: session.refresh_token,
-        access_token: session.access_token,
-    });
-
-    if (userError !== null) {
-        console.error(userError);
-        throw new Error(userError.message);
-    }
-
-    if (user === null || user.user === null || user.session === null) {
-        throw new Error("User not found");
-    }
-
     const { data, error } = await supabase
         .from("actor")
         .delete()

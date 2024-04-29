@@ -64,7 +64,7 @@ export async function addActorAction(
                 actorFormData.actorImage,
             );
         }
-        await dbAddActor(session.session, {
+        await dbAddActor({
             firstName: actorFormData.firstName,
             lastName: actorFormData.lastName,
             description: actorFormData.description,
@@ -164,7 +164,7 @@ export async function deleteActorAction(
 
     const actorFormData = data.data;
     try {
-        await dbDeleteActor(session.session, actorFormData.id);
+        await dbDeleteActor(actorFormData.id);
     } catch (error) {
         console.error(error);
         return {

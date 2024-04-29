@@ -31,10 +31,10 @@ async function Actors() {
                         {actor.actorImage ? (
                             <Image
                                 src={actor.actorImage}
-                                layout="responsive"
-                                width={300}
-                                height={300}
-                                alt=""
+                                className="h-full w-full object-cover object-center"
+                                width={192}
+                                height={192}
+                                alt="Actor image"
                             />
                         ) : (
                             <div className="h-full w-full bg-muted" />

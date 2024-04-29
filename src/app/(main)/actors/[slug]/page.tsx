@@ -21,14 +21,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
     return (
         <div className="flex h-full w-full flex-col">
             <div className="flex w-full">
-                <div className="h-96 w-full bg-muted relative">
+                <div className="h-96 w-full bg-muted relative max-w-96">
                     {actor.actorImage && (
                         <Image
                             src={actor.actorImage}
-                            layout="fill"
-                            objectFit="cover"
-                            className="w-full h-full"
-                            alt="image"
+                            width={512}
+                            height={384}
+                            className="object-cover object-center w-full h-full"
+                            alt="Actor image"
                         />
                     )}
                 </div>

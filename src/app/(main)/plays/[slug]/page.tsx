@@ -35,11 +35,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <AspectRatio ratio={4 / 1} className="relative w-full bg-muted">
                 <Image
                     src={play.playImage || image}
-                    layout="fill"
-                    objectFit="cover"
-                    alt="Theater"
+                    width={1920}
+                    height={480}
+                    className="h-full w-full object-cover object-center"
+                    alt="Play image"
                 />
-                <div className="absolute z-10 flex h-full w-full items-end p-16">
+                <div className="absolute top-0 z-10 flex h-full w-full items-end p-16">
                     <h1 className="h-fit text-4xl font-bold text-primary-foreground xl:text-6xl">
                         {play.name}
                     </h1>
@@ -47,9 +48,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </AspectRatio>
             <AspectRatio
                 ratio={4 / 1}
-                className="relative flex w-full bg-muted overflow-hidden"
+                className="relative flex w-full overflow-hidden bg-muted"
             >
-                <div className="flex flex-col gap-8 bg-secondary p-8 text-secondary-foreground circleaftef">
+                <div className="circleaftef flex flex-col gap-8 bg-secondary p-8 text-secondary-foreground">
                     <div>
                         <p>Autor:</p>
                         <h2 className="text-xl font-semibold">{play.author}</h2>

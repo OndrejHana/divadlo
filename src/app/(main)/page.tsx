@@ -10,11 +10,11 @@ export default function Page() {
     return (
         <div className="flex h-full w-full flex-col">
             <AspectRatio ratio={4 / 1}>
-                <div className="h-full w-full bg-muted" />
                 <Image
                     src={image}
-                    layout="fill"
-                    objectFit="cover"
+                    width={1920}
+                    height={480}
+                    className="h-full w-full object-cover object-center"
                     alt="Theater"
                 />
             </AspectRatio>

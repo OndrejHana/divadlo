@@ -65,9 +65,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
                 <Image
                     src={event?.play.playImage || image}
-                    layout="fill"
-                    objectFit="cover"
-                    alt="Theater"
+                    width={1920}
+                    height={480}
+                    className="h-full w-full object-cover object-center"
+                    alt="Play image"
                 />
             </AspectRatio>
             <SeatView tickets={tickets} />

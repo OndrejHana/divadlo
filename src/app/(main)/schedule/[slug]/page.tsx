@@ -33,8 +33,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <AspectRatio ratio={4 / 1} className="relative w-full bg-muted">
                 <Image
                     src={image}
-                    layout="fill"
-                    objectFit="cover"
+                    width={1920}
+                    height={480}
+                    className="h-full w-full object-cover object-center"
                     alt="Theater"
                 />
                 <div className="absolute z-10 flex h-full w-full items-end p-16">

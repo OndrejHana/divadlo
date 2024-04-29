@@ -4,6 +4,8 @@ import Link from "next/link";
 import { dbGetEvents } from "@/db-handler/db-events";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 function PlayCardSkeleton() {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center justify-items-center gap-2 self-center p-2">

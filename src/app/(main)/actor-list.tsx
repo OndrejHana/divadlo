@@ -9,8 +9,9 @@ function Card({ actor }: { actor: Actor }) {
             {actor.actorImage ? (
                 <Image
                     src={actor.actorImage}
-                    layout="fill"
-                    objectFit="cover"
+                    width={192}
+                    height={256}
+                    className="object-cover object-center w-full h-full"
                     alt="actor"
                 />
             ) : (
