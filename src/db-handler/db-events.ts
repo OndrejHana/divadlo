@@ -58,6 +58,113 @@ export async function dbGetEvents(): Promise<Event[]> {
     return events;
 }
 
+export async function dbGetFutureEvents(): Promise<Event[]> {
+    const { data, error } = await supabase.from("future_events").select(`
+            id,
+            time,
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
+            hall(id, name, number_of_seats)
+        `);
+
+    if (data === undefined) return [];
+    if (error !== null) {
+        throw new Error(error.message);
+    }
+
+    const events: Event[] = (
+        data as unknown as {
+            id: number;
+            time: string;
+            play: {
+                id: number;
+                name: string;
+                author: string;
+                description: string;
+                year_of_release: number;
+                duration_minutes: number;
+                play_image: string;
+            };
+            hall: { id: number; name: string; number_of_seats: number };
+        }[]
+    ).map((event: any) => {
+        const Event: Event = {
+            id: event.id,
+            time: new Date(event.time),
+            play: {
+                id: event.play.id,
+                name: event.play.name,
+                author: event.play.author,
+                description: event.play.description,
+                yearOfRelease: event.play.year_of_release,
+                durationMinutes: event.play.duration_minutes,
+                playImage: event.play.play_image,
+            },
+            hall: {
+                id: event.hall.id,
+                name: event.hall.name,
+                numberOfSeats: event.hall.number_of_seats,
+            },
+        };
+        return Event;
+    });
+
+    return events;
+}
+
+
+export async function dbGetPreviousEvents(): Promise<Event[]> {
+    const { data, error } = await supabase.from("previous_events").select(`
+            id,
+            time,
+            play(id, name, author, description, year_of_release, duration_minutes, play_image),
+            hall(id, name, number_of_seats)
+        `);
+
+    if (data === undefined) return [];
+    if (error !== null) {
+        throw new Error(error.message);
+    }
+
+    const events: Event[] = (
+        data as unknown as {
+            id: number;
+            time: string;
+            play: {
+                id: number;
+                name: string;
+                author: string;
+                description: string;
+                year_of_release: number;
+                duration_minutes: number;
+                play_image: string;
+            };
+            hall: { id: number; name: string; number_of_seats: number };
+        }[]
+    ).map((event: any) => {
+        const Event: Event = {
+            id: event.id,
+            time: new Date(event.time),
+            play: {
+                id: event.play.id,
+                name: event.play.name,
+                author: event.play.author,
+                description: event.play.description,
+                yearOfRelease: event.play.year_of_release,
+                durationMinutes: event.play.duration_minutes,
+                playImage: event.play.play_image,
+            },
+            hall: {
+                id: event.hall.id,
+                name: event.hall.name,
+                numberOfSeats: event.hall.number_of_seats,
+            },
+        };
+        return Event;
+    });
+
+    return events;
+}
+
 export async function dbGetEvent(id: number): Promise<Event | null> {
     const { data, error } = await supabase
         .from("event")

@@ -1,4 +1,4 @@
-import { dbGetEvents } from "@/db-handler/db-events";
+import { dbGetEvents, dbGetFutureEvents } from "@/db-handler/db-events";
 import { Event } from "@/types/event";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -38,7 +38,7 @@ export function EventCard({ event }: { event: Event }) {
 }
 
 export default async function MainPageEventList() {
-    const events = await dbGetEvents();
+    const events = await dbGetFutureEvents();
 
     return (
         <div className="flex h-full w-full flex-col gap-8 px-2 py-8 lg:px-16">
